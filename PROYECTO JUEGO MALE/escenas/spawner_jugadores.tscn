@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://c5iii3fxon6cd"]
+
+[ext_resource type="Script" uid="uid://v6p2yr0uff63" path="res://escenas/spawner_jugadores.gd" id="1_njovf"]
+[ext_resource type="PackedScene" uid="uid://qf8wog8hhq47" path="res://escenas/personaje_de_prueba.tscn" id="2_v4vdd"]
+
+[node name="SpawnerJugadores" type="Node3D" unique_id=484033519]
+script = ExtResource("1_njovf")
+escena_jugador = ExtResource("2_v4vdd")
+
+[node name="MarkerPosition" type="Marker3D" parent="." unique_id=401550855]
+unique_name_in_owner = true
+gizmo_extents = 1.0
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="." unique_id=344127440]
+_spawnable_scenes = PackedStringArray("uid://qf8wog8hhq47")
+spawn_path = NodePath("..")

@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://db3c4gewtolrb"]
+
+[ext_resource type="PackedScene" uid="uid://bbveyoy4vsfl8" path="res://escena_prototipos/ambiente_fachero.tscn" id="1_p2tgs"]
+[ext_resource type="Texture2D" uid="uid://ylaogtl7p63" path="res://escena_prototipos/textura_prototipo/texture_04.png" id="2_dhx8v"]
+[ext_resource type="PackedScene" uid="uid://2eyrjyvlbtkv" path="res://escenas/hostear_y_unirse_ejemplo.tscn" id="3_nbmnv"]
+[ext_resource type="PackedScene" uid="uid://c5iii3fxon6cd" path="res://escenas/spawner_jugadores.tscn" id="4_lc11t"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nbmnv"]
+albedo_texture = ExtResource("2_dhx8v")
+uv1_scale = Vector3(15, 15, 15)
+
+[node name="MainPrototipos" type="Node3D" unique_id=158957130]
+
+[node name="AmbienteFachero" parent="." unique_id=308938365 instance=ExtResource("1_p2tgs")]
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=903855019]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.0492187, 13.691168)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=39742451]
+use_collision = true
+size = Vector3(50, 1, 50)
+material = SubResource("StandardMaterial3D_nbmnv")
+
+[node name="HostearYUnirseEjemplo" parent="." unique_id=2129995875 instance=ExtResource("3_nbmnv")]
+
+[node name="SpawnerJugadores" parent="." unique_id=484033519 instance=ExtResource("4_lc11t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0334892, 0)
+
+[connection signal="agregar_jugador" from="HostearYUnirseEjemplo" to="SpawnerJugadores" method="spawnear_jugador"]

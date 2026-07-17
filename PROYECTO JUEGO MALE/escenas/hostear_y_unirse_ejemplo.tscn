@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://2eyrjyvlbtkv"]
+
+[ext_resource type="Script" uid="uid://c6rja5r4t3gh5" path="res://escenas/hostear_y_unirse_ejemplo.gd" id="1_hynjt"]
+
+[node name="HostearYUnirseEjemplo" type="Control" unique_id=2129995875]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hynjt")
+MULTIJUGADOR_TIPO = "ENET"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1995518185]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 207.0
+offset_bottom = 111.0
+
+[node name="ButtonHost" type="Button" parent="VBoxContainer" unique_id=376109909]
+unique_name_in_owner = true
+layout_mode = 2
+text = "	HOST"
+
+[node name="ButtonJoin" type="Button" parent="VBoxContainer" unique_id=1074223984]
+unique_name_in_owner = true
+layout_mode = 2
+text = "UNIRME A UNA PARTIDA"
+
+[node name="TextoIDSala" type="LineEdit" parent="VBoxContainer" unique_id=1764902659]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "id de la partida aqui:"
+
+[node name="LabelIDColocado" type="Label" parent="VBoxContainer" unique_id=1345450659]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 25)
+layout_mode = 2
+autowrap_mode = 3
+
+[connection signal="pressed" from="VBoxContainer/ButtonHost" to="." method="_on_button_host_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonJoin" to="." method="_on_button_join_pressed"]
+[connection signal="text_submitted" from="VBoxContainer/TextoIDSala" to="." method="_on_texto_id_sala_text_submitted"]
