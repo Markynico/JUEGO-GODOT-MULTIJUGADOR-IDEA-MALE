@@ -13,10 +13,8 @@ uv1_scale = Vector3(15, 15, 15)
 
 [node name="AmbienteFachero" parent="." unique_id=308938365 instance=ExtResource("1_p2tgs")]
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=903855019]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.0492187, 13.691168)
-
 [node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=39742451]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.868312, 0)
 use_collision = true
 size = Vector3(50, 1, 50)
 material = SubResource("StandardMaterial3D_nbmnv")

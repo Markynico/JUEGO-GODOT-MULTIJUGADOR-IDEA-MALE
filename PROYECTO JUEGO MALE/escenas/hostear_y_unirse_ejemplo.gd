@@ -50,6 +50,8 @@ func _on_button_host_pressed() -> void:
 		Steam.createLobby(Steam.LobbyType.LOBBY_TYPE_PUBLIC, numero_maximo_jugadores)
 		#con la linea de arriba se emite la signal lobby_created (que conecte en el ready)
 	es_host = true
+	#desactivo el boton nada mas pq al saltar con espacio se presionaba solo
+	button_host.disabled = true
 
 
 func _on_lobby_creado(resultado : int , lobby_id_parametro : int):
