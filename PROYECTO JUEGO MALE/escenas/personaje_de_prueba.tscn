@@ -1,8 +1,18 @@
 [gd_scene format=3 uid="uid://qf8wog8hhq47"]
 
 [ext_resource type="Script" uid="uid://uhotxmfvfr7u" path="res://escenas/personaje_de_prueba.gd" id="1_8sxmm"]
+[ext_resource type="Script" uid="uid://b18u5owt5ufc1" path="res://escenas/camaras_manager.gd" id="2_44lwu"]
+[ext_resource type="Script" uid="uid://cmli4jryrg4ol" path="res://escenas/spring_arm_camara_principal.gd" id="2_ejlb5"]
+[ext_resource type="Script" uid="uid://cvfkwkec6p4b3" path="res://escenas/movimiento_manager.gd" id="3_n1rdq"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_e56gs"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n1rdq"]
+albedo_color = Color(1, 0.5058824, 0.3529412, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_n1rdq"]
+material = SubResource("StandardMaterial3D_n1rdq")
+size = Vector3(0.5493164, 0.5214844, 0.57421875)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_e56gs"]
 
@@ -10,13 +20,25 @@
 properties/0/path = NodePath(".:position")
 properties/0/spawn = true
 properties/0/replication_mode = 1
+properties/1/path = NodePath("MeshInstance3D:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_8sxmm"]
+radius = 0.3
 
 [node name="PersonajeDePrueba" type="CharacterBody3D" unique_id=687461658]
+collision_layer = 2
+collision_mask = 3
 script = ExtResource("1_8sxmm")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=6520461]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 mesh = SubResource("CapsuleMesh_e56gs")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="MeshInstance3D" unique_id=1423066436]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.033447266, 0.52436376, 0.43603587)
+mesh = SubResource("BoxMesh_n1rdq")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1981675105]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
@@ -28,8 +50,10 @@ replication_config = SubResource("SceneReplicationConfig_8sxmm")
 [node name="Label3D" type="Label3D" parent="." unique_id=459382555]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.651445, 0)
+pixel_size = 0.003
 billboard = 1
 text = "texto inicial"
+font_size = 90
 
 [node name="ChatManager" type="Node" parent="." unique_id=1720614317]
 
@@ -44,5 +68,26 @@ offset_left = -147.0
 offset_top = -55.0
 grow_horizontal = 0
 grow_vertical = 0
+
+[node name="CamarasManager" type="Node3D" parent="." unique_id=1308985841 node_paths=PackedStringArray("body", "camara_jugador")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5335453, 0)
+script = ExtResource("2_44lwu")
+body = NodePath("..")
+camara_jugador = NodePath("SpringArmCamaraPrincipal/CamaraJugador")
+
+[node name="SpringArmCamaraPrincipal" type="SpringArm3D" parent="CamarasManager" unique_id=1847829506]
+shape = SubResource("SphereShape3D_8sxmm")
+spring_length = 6.0
+script = ExtResource("2_ejlb5")
+
+[node name="CamaraJugador" type="Camera3D" parent="CamarasManager/SpringArmCamaraPrincipal" unique_id=1560346745]
+
+[node name="CameraEspectando" type="Camera3D" parent="CamarasManager" unique_id=2055501495]
+
+[node name="MovimientoManager" type="Node" parent="." unique_id=744814532 node_paths=PackedStringArray("body", "camara_jugador", "skin_jugador")]
+script = ExtResource("3_n1rdq")
+body = NodePath("..")
+camara_jugador = NodePath("../CamarasManager/SpringArmCamaraPrincipal/CamaraJugador")
+skin_jugador = NodePath("../MeshInstance3D")
 
 [connection signal="text_submitted" from="ChatManager/LineEdit" to="." method="_on_line_edit_text_submitted"]
