@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://c34ku80gqheff"]
+
+[sub_resource type="Curve3D" id="Curve3D_3n7py"]
+closed = true
+_data = {
+"points": PackedVector3Array(-12.65921, 0, 119.20767, 12.65921, 0, -119.20767, -284.83252, 0, -2.6373353, -65.405975, 0, -6.329605, 65.405975, 0, 6.329605, -204.65744, 0, -225.22864, -18.98883, 0, -55.91155, 18.98883, 0, 55.91155, -142.41626, 0, 31.120594, -84.394775, 0, -24.26352, 84.394775, 0, 24.26352, -45.362244, 0, 158.76773, -43.25226, 0, 32.702957, 43.25226, 0, -32.702957, 144.52606, 0, 148.2184, 40.087524, 0, 51.691814, -40.087524, 0, -51.691814, 209.93207, 0, -103.91111, 69.62573, 0, 244.74493, -69.62573, 0, -244.74493, -65.406006, 0, -143.99864, -13.714111, 0, -146.63599, 13.714111, 0, 146.63599, 361.8427, 0, -241.05267, 18.98877, 0, -146.63596, -18.98877, 0, 146.63596, 371.33722, 0, 175.64668, 130.60571, 0, 10.04657, -130.60571, 0, -10.04657, -7.1761475, 0, 323.6439, 44.438293, 0, 23.330048, -44.438293, 0, -23.330048, -266.89862, 0, 255.82175),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 11
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lvxhu"]
+albedo_color = Color(1, 0.3, 0, 1)
+
+[node name="Pista 2" type="Node3D" unique_id=1640144455]
+
+[node name="Path3D2" type="Path3D" parent="." unique_id=1682735445]
+curve = SubResource("Curve3D_3n7py")
+
+[node name="CSGPolygon3D" type="CSGPolygon3D" parent="Path3D2" unique_id=350687376]
+use_collision = true
+polygon = PackedVector2Array(0, 0, -0.0017674565, 0.1277864, 0.99592733, 0.14090258, 1, 0)
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 1.0
+path_simplify_angle = 0.0
+path_rotation = 2
+path_rotation_accurate = false
+path_local = false
+path_continuous_u = true
+path_u_distance = 1.0
+path_joined = false
+material = SubResource("StandardMaterial3D_lvxhu")

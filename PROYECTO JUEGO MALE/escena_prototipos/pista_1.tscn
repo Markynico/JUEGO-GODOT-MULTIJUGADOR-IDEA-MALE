@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://bvtjh3wkdtbl2"]
+
+[sub_resource type="Curve3D" id="Curve3D_0gflj"]
+closed = true
+_data = {
+"points": PackedVector3Array(-55.34778, 0, -23.06157, 55.34778, 0, 23.06157, -205.7092, 0, -151.74512, -59.960022, 0, -5.5347595, 59.960022, 0, 5.5347595, -38.74341, 0, -196.94579, -55.34778, 0, 1.8449402, 55.34778, 0, -1.8449402, 60.88257, 0, -115.76908, -77.48688, 0, -1.8449249, 77.48688, 0, 1.8449249, 248.14246, 0, -157.27989, -37.820923, 0, -47.968063, 37.820923, 0, 47.968063, 416.0307, 0, -107.4669, 67.33978, 0, -38.74344, -67.33978, 0, 38.74344, 399.4264, 0, 148.05527, 25.82898, 0, -135.60204, -25.82898, 0, 135.60204, 141.13678, 0, 222.77473, 45.200684, 0, 38.743423, -45.200684, 0, -38.743423, -169.73315, 0, 222.77473, 40.58835, 0, 50.735474, -40.58835, 0, -50.735474, -115.30786, 0, 92.70752, 58.115143, 0, 29.518812, -58.115143, 0, -29.518812, -362.52786, 0, 29.980043, -11.069519, 0, 71.95209, 11.069519, 0, -71.95209, -404.96118, 0, -126.83862, -59.037598, 0, 3.6898499, 59.037598, 0, -3.6898499, -306.25766, 0, -250.44862),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 12
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0gflj"]
+albedo_color = Color(1, 0.3, 0, 1)
+
+[node name="Pista 1" type="Node3D" unique_id=1640144455]
+
+[node name="Path3D" type="Path3D" parent="." unique_id=525621840]
+curve = SubResource("Curve3D_0gflj")
+
+[node name="CSGPolygon3D" type="CSGPolygon3D" parent="Path3D" unique_id=196238012]
+use_collision = true
+polygon = PackedVector2Array(0, 0, -0.0017674565, 0.1277864, 0.99592733, 0.14090258, 1, 0)
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 1.0
+path_simplify_angle = 0.0
+path_rotation = 2
+path_rotation_accurate = false
+path_local = false
+path_continuous_u = true
+path_u_distance = 1.0
+path_joined = false
+material = SubResource("StandardMaterial3D_0gflj")
