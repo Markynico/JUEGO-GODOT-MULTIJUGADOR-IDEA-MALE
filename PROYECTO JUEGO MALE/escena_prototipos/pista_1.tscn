@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://bvtjh3wkdtbl2"]
 
+[ext_resource type="Texture2D" uid="uid://ylaogtl7p63" path="res://escena_prototipos/textura_prototipo/texture_04.png" id="1_wrpun"]
+
 [sub_resource type="Curve3D" id="Curve3D_0gflj"]
 closed = true
 _data = {
@@ -8,8 +10,8 @@ _data = {
 }
 point_count = 12
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0gflj"]
-albedo_color = Color(1, 0.3, 0, 1)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lic63"]
+albedo_texture = ExtResource("1_wrpun")
 
 [node name="Pista 1" type="Node3D" unique_id=1640144455]
 
@@ -18,7 +20,7 @@ curve = SubResource("Curve3D_0gflj")
 
 [node name="CSGPolygon3D" type="CSGPolygon3D" parent="Path3D" unique_id=196238012]
 use_collision = true
-polygon = PackedVector2Array(0, 0, -0.0017674565, 0.1277864, 0.99592733, 0.14090258, 1, 0)
+polygon = PackedVector2Array(0, 0, -0.0017674565, 0.1277864, 20.056, 0, 1, 0)
 mode = 2
 path_node = NodePath("..")
 path_interval_type = 0
@@ -28,6 +30,6 @@ path_rotation = 2
 path_rotation_accurate = false
 path_local = false
 path_continuous_u = true
-path_u_distance = 1.0
+path_u_distance = 6.23
 path_joined = false
-material = SubResource("StandardMaterial3D_0gflj")
+material = SubResource("StandardMaterial3D_lic63")
