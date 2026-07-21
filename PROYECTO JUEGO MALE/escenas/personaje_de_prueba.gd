@@ -12,6 +12,9 @@ func _enter_tree() -> void:
 func _ready() -> void:
 	if not is_multiplayer_authority():
 		%LineEdit.hide()
+	var nombre_steam : String = Steam.getPersonaName()
+	print(nombre_steam)
+	setear_texto_label.rpc(nombre_steam)
 
 func _physics_process(delta: float) -> void:
 	if not is_multiplayer_authority():
