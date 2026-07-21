@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://c3cco0lxiatgh"]
+
+[sub_resource type="Curve3D" id="Curve3D_42ehu"]
+_data = {
+"points": PackedVector3Array(-17.215332, 0, 132.34315, 17.215332, 0, -132.34315, -690.7666, 0, 316.87036, -21.519226, 0, 32.278824, 21.519226, 0, -32.278824, -581.0187, 0, 37.12064, -60.253784, 0, -16.139397, 60.253784, 0, 16.139397, -420.70056, 0, -113.513824, -41.962463, 0, -69.93741, 41.962463, 0, 69.93741, -433.61206, 0, 183.45125, -27.974976, 0, 9.68364, 27.974976, 0, -9.68364, -340.00354, 0, 246.93294, -67.78549, 0, 89.30473, 67.78549, 0, -89.30473, -163.54602, 0, -14.525473, -103.292175, 0, 30.126892, 103.292175, 0, -30.126892, 126.96332, 0, -228.6416, -31.202942, 0, -13.987488, 31.202942, 0, 13.987488, 305.5728, 0, -258.7685, 7.5317383, 0, -57.0259, -7.5317383, 0, 57.0259, 447.59955, 0, -84.4629, 63.481567, 0, -29.050943, -63.481567, 0, 29.050943, 324.94012, 0, 44.652355, -20.443237, 0, -86.07683, 20.443237, 0, 86.07683, -46.266296, 0, 253.38869, -97.912476, 0, 61.329727, 97.912476, 0, -61.329727, 367.97845, 0, 251.23677, 5.842407, 0, 131.58604, -5.842407, 0, -131.58604, 682.159, 0, -142.56477, 115.63379, 0, 7.6687927, -115.63379, 0, -7.6687927, 503.5495, 0, -313.6425, 0, 0, 0, 0, 0, 0, -461.58704, 0, -284.59155),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 15
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_42ehu"]
+albedo_color = Color(1, 0.3, 0, 1)
+
+[node name="Pista 3" type="Node3D" unique_id=1176653352]
+
+[node name="Path3D" type="Path3D" parent="." unique_id=1386819661]
+curve = SubResource("Curve3D_42ehu")
+
+[node name="CSGPolygon3D" type="CSGPolygon3D" parent="Path3D" unique_id=628182253]
+use_collision = true
+polygon = PackedVector2Array(0, 0, -0.0017674565, 0.1277864, 0.99592733, 0.14090258, 1, 0)
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 1.0
+path_simplify_angle = 0.0
+path_rotation = 2
+path_rotation_accurate = false
+path_local = false
+path_continuous_u = true
+path_u_distance = 1.0
+path_joined = false
+material = SubResource("StandardMaterial3D_42ehu")
