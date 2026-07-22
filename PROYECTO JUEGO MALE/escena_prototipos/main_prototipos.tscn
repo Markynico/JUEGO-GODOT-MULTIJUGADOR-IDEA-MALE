@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://ylaogtl7p63" path="res://escena_prototipos/textura_prototipo/texture_04.png" id="2_dhx8v"]
 [ext_resource type="PackedScene" uid="uid://2eyrjyvlbtkv" path="res://escenas/hostear_y_unirse_ejemplo.tscn" id="3_nbmnv"]
 [ext_resource type="PackedScene" uid="uid://c5iii3fxon6cd" path="res://escenas/spawner_jugadores.tscn" id="4_lc11t"]
-[ext_resource type="PackedScene" uid="uid://bvtjh3wkdtbl2" path="res://escena_prototipos/pista_1.tscn" id="5_kjfre"]
+[ext_resource type="PackedScene" uid="uid://i3enhkax7gbj" path="res://escena_prototipos/pista_procedural.tscn" id="6_sw5uh"]
 [ext_resource type="PackedScene" uid="uid://crrwefxtvqv5k" path="res://escenas/equipos_manager.tscn" id="6_wgupi"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nbmnv"]
@@ -28,8 +28,9 @@ material = SubResource("StandardMaterial3D_nbmnv")
 [node name="SpawnerJugadores" parent="." unique_id=484033519 instance=ExtResource("4_lc11t")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0334892, 0)
 
-[node name="Pista 1" parent="." unique_id=1640144455 instance=ExtResource("5_kjfre")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.81895, -2.2377052, -140.00153)
+[node name="pista procedural" parent="." unique_id=1494475582 instance=ExtResource("6_sw5uh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.751793, -2.3745632, -10.30991)
+seed_pista = 3158010980
 
 [connection signal="agregar_jugador" from="HostearYUnirseEjemplo" to="EquiposManager" method="_on_hostear_y_unirse_ejemplo_agregar_jugador"]
 [connection signal="agregar_jugador" from="HostearYUnirseEjemplo" to="SpawnerJugadores" method="spawnear_jugador"]
