@@ -2,7 +2,7 @@ class_name EquiposManager
 extends Control
 
 signal equipos_actualizados(diccionario_equipos)
-
+@export var vbox_label_equipos : VBoxContainer
 @export var layer_equipos : CanvasLayer
 enum EQUIPOS {ROJO, AZUL}
 var diccionario_equipos : Dictionary = {} #PARA LLENAR CON EL TIPO ID : EQUIPOS.ROJO o como sea mejor
@@ -45,6 +45,20 @@ func solicitar_unirse_equipo(equipo:EQUIPOS):
 func sincronizar_equipos(nuevo_diccionario:Dictionary):
 	diccionario_equipos = nuevo_diccionario
 	equipos_actualizados.emit(diccionario_equipos)
+	#aca se supone q se agrego una eprsona
+	
+	for hijo in vbox_label_equipos.get_children():
+		hijo.queue_free() #limpio
+	
+	for id in diccionario_equipos.keys():
+		var label_nuevo := Label.new() 
+		
+		var nombre_equipo := "ROJO" #MUY UNGA UNGA PERO BUENO
+		if diccionario_equipos[id] == EQUIPOS.AZUL:
+			nombre_equipo = "AZUL"
+		label_nuevo.text = "Jugador %s -> %s" % [id, nombre_equipo]
+	
+		vbox_label_equipos.add_child(label_nuevo)
 	print(diccionario_equipos)
 
 

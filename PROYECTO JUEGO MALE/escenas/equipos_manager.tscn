@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://mrehdu6yuctf" path="res://escenas/equipos_manager.gd" id="1_bfvnk"]
 
-[node name="EquiposManager" type="Control" unique_id=545837676 node_paths=PackedStringArray("layer_equipos")]
+[node name="EquiposManager" type="Control" unique_id=545837676 node_paths=PackedStringArray("vbox_label_equipos", "layer_equipos")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -10,6 +10,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_bfvnk")
+vbox_label_equipos = NodePath("VBoxContainerEquipos")
 layer_equipos = NodePath("LayerEquipos")
 
 [node name="LayerEquipos" type="CanvasLayer" parent="." unique_id=1103155778]
@@ -47,6 +48,17 @@ text = "EQUIPO AZUL"
 [node name="ButtonCerrar" type="Button" parent="LayerEquipos/VBoxContainer" unique_id=721166671]
 layout_mode = 2
 text = "CERRAR"
+
+[node name="VBoxContainerEquipos" type="VBoxContainer" parent="." unique_id=1585822113]
+layout_mode = 0
+offset_left = 826.0
+offset_right = 1146.0
+offset_bottom = 107.0
+
+[node name="Label" type="Label" parent="VBoxContainerEquipos" unique_id=334917126]
+layout_mode = 2
+text = "EQUIPOS Y JUGADORES"
+horizontal_alignment = 1
 
 [connection signal="pressed" from="LayerEquipos/VBoxContainer/ButtonEquipoAzul" to="." method="_on_button_equipo_azul_pressed"]
 [connection signal="pressed" from="LayerEquipos/VBoxContainer/ButtonEquipoRojo" to="." method="_on_button_equipo_rojo_pressed"]
