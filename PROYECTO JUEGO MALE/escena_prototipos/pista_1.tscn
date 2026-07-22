@@ -1,11 +1,12 @@
 [gd_scene format=3 uid="uid://bvtjh3wkdtbl2"]
 
+[ext_resource type="Script" uid="uid://6pcmr5sv6tqh" path="res://escena_prototipos/pista_1.gd" id="1_lic63"]
 [ext_resource type="Texture2D" uid="uid://ylaogtl7p63" path="res://escena_prototipos/textura_prototipo/texture_04.png" id="1_wrpun"]
 
 [sub_resource type="Curve3D" id="Curve3D_0gflj"]
 closed = true
 _data = {
-"points": PackedVector3Array(-55.34778, 0, -23.06157, 55.34778, 0, 23.06157, -205.7092, 0, -151.74512, -59.960022, 0, -5.5347595, 59.960022, 0, 5.5347595, -38.74341, 0, -196.94579, -55.34778, 0, 1.8449402, 55.34778, 0, -1.8449402, 60.88257, 0, -115.76908, -77.48688, 0, -1.8449249, 77.48688, 0, 1.8449249, 248.14246, 0, -157.27989, -37.820923, 0, -47.968063, 37.820923, 0, 47.968063, 416.0307, 0, -107.4669, 67.33978, 0, -38.74344, -67.33978, 0, 38.74344, 399.4264, 0, 148.05527, 25.82898, 0, -135.60204, -25.82898, 0, 135.60204, 141.13678, 0, 222.77473, 45.200684, 0, 38.743423, -45.200684, 0, -38.743423, -169.73315, 0, 222.77473, 40.58835, 0, 50.735474, -40.58835, 0, -50.735474, -115.30786, 0, 92.70752, 58.115143, 0, 29.518812, -58.115143, 0, -29.518812, -362.52786, 0, 29.980043, -11.069519, 0, 71.95209, 11.069519, 0, -71.95209, -404.96118, 0, -126.83862, -59.037598, 0, 3.6898499, 59.037598, 0, -3.6898499, -306.25766, 0, -250.44862),
+"points": PackedVector3Array(-55.34778, 0, -23.06157, 55.34778, 0, 23.06157, -205.7092, 0, -151.74512, -59.960022, 0, -5.5347595, 59.960022, 0, 5.5347595, -38.74341, 0, -196.94579, -55.34778, 0, 1.8449402, 55.34778, 0, -1.8449402, 60.88257, 0, -115.76908, -77.48688, 0, -1.8449249, 77.48688, 0, 1.8449249, 248.14246, 0, -157.27989, -37.820923, 0, -47.968063, 37.820923, 0, 47.968063, 416.0307, 0, -107.4669, 67.33978, 0, -38.74344, -67.33978, 0, 38.74344, 399.4264, 0, 148.05527, 25.82898, 0, -135.60204, -25.82898, 0, 135.60204, 141.13678, 0, 222.77473, 83.232864, 11.228485, 87.18594, -83.232864, -11.228485, -87.18594, -96.97016, 22.018646, 336.60428, 40.58835, 0, 50.735474, -40.58835, 0, -50.735474, -115.30786, 0, 92.70752, 58.115143, 0, 29.518812, -58.115143, 0, -29.518812, -362.52786, 0, 29.980043, -11.069519, 0, 71.95209, 11.069519, 0, -71.95209, -404.96118, 0, -126.83862, -59.037598, 0, 3.6898499, 59.037598, 0, -3.6898499, -306.25766, 0, -250.44862),
 "tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 }
 point_count = 12
@@ -14,13 +15,30 @@ point_count = 12
 albedo_texture = ExtResource("1_wrpun")
 
 [node name="Pista 1" type="Node3D" unique_id=1640144455]
+script = ExtResource("1_lic63")
 
 [node name="Path3D" type="Path3D" parent="." unique_id=525621840]
 curve = SubResource("Curve3D_0gflj")
 
-[node name="CSGPolygon3D" type="CSGPolygon3D" parent="Path3D" unique_id=196238012]
+[node name="Pista" type="CSGPolygon3D" parent="Path3D" unique_id=196238012]
+unique_name_in_owner = true
 use_collision = true
-polygon = PackedVector2Array(0, 0, -0.0017674565, 0.1277864, 20.056, 0, 1, 0)
+polygon = PackedVector2Array(0, 0.5, 20, 0.5, 20, 0, 0, 0)
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 1.0
+path_simplify_angle = 0.0
+path_rotation = 2
+path_rotation_accurate = true
+path_local = true
+path_continuous_u = true
+path_u_distance = 6.23
+path_joined = false
+material = SubResource("StandardMaterial3D_lic63")
+
+[node name="Bordes" type="CSGPolygon3D" parent="Path3D" unique_id=1179690992]
+use_collision = true
 mode = 2
 path_node = NodePath("..")
 path_interval_type = 0
@@ -28,8 +46,21 @@ path_interval = 1.0
 path_simplify_angle = 0.0
 path_rotation = 2
 path_rotation_accurate = false
-path_local = false
+path_local = true
 path_continuous_u = true
-path_u_distance = 6.23
+path_u_distance = 1.0
 path_joined = false
-material = SubResource("StandardMaterial3D_lic63")
+
+[node name="Bordes2" type="CSGPolygon3D" parent="Path3D" unique_id=430771353]
+use_collision = true
+mode = 2
+path_node = NodePath("..")
+path_interval_type = 0
+path_interval = 1.0
+path_simplify_angle = 0.0
+path_rotation = 2
+path_rotation_accurate = false
+path_local = true
+path_continuous_u = true
+path_u_distance = 1.0
+path_joined = false
