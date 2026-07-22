@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://2eyrjyvlbtkv" path="res://escenas/hostear_y_unirse_ejemplo.tscn" id="3_nbmnv"]
 [ext_resource type="PackedScene" uid="uid://c5iii3fxon6cd" path="res://escenas/spawner_jugadores.tscn" id="4_lc11t"]
 [ext_resource type="PackedScene" uid="uid://bvtjh3wkdtbl2" path="res://escena_prototipos/pista_1.tscn" id="5_kjfre"]
+[ext_resource type="PackedScene" uid="uid://crrwefxtvqv5k" path="res://escenas/equipos_manager.tscn" id="6_wgupi"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nbmnv"]
 albedo_texture = ExtResource("2_dhx8v")
@@ -20,6 +21,13 @@ use_collision = true
 size = Vector3(50, 1, 50)
 material = SubResource("StandardMaterial3D_nbmnv")
 
+[node name="EquiposManager" parent="." unique_id=545837676 instance=ExtResource("6_wgupi")]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="EquiposManager" unique_id=1472035206]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
 [node name="HostearYUnirseEjemplo" parent="." unique_id=2129995875 instance=ExtResource("3_nbmnv")]
 
 [node name="SpawnerJugadores" parent="." unique_id=484033519 instance=ExtResource("4_lc11t")]
@@ -28,4 +36,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0334892, 0)
 [node name="Pista 1" parent="." unique_id=1640144455 instance=ExtResource("5_kjfre")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.2377052, -142.30183)
 
+[connection signal="agregar_jugador" from="HostearYUnirseEjemplo" to="EquiposManager" method="_on_hostear_y_unirse_ejemplo_agregar_jugador"]
 [connection signal="agregar_jugador" from="HostearYUnirseEjemplo" to="SpawnerJugadores" method="spawnear_jugador"]

@@ -4,6 +4,8 @@
 [ext_resource type="Script" uid="uid://b18u5owt5ufc1" path="res://escenas/camaras_manager.gd" id="2_44lwu"]
 [ext_resource type="Script" uid="uid://cmli4jryrg4ol" path="res://escenas/spring_arm_camara_principal.gd" id="2_ejlb5"]
 [ext_resource type="Script" uid="uid://cvfkwkec6p4b3" path="res://escenas/movimiento_manager.gd" id="3_n1rdq"]
+[ext_resource type="Script" uid="uid://dve2e6fgfrp68" path="res://escenas/nitro_manager.gd" id="6_i5glh"]
+[ext_resource type="PackedScene" uid="uid://bgsstduc71f6u" path="res://escenas/hud_player.tscn" id="6_p2vvc"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_e56gs"]
 
@@ -81,13 +83,29 @@ spring_length = 6.0
 script = ExtResource("2_ejlb5")
 
 [node name="CamaraJugador" type="Camera3D" parent="CamarasManager/SpringArmCamaraPrincipal" unique_id=1560346745]
+fov = 85.0
 
 [node name="CameraEspectando" type="Camera3D" parent="CamarasManager" unique_id=2055501495]
 
-[node name="MovimientoManager" type="Node" parent="." unique_id=744814532 node_paths=PackedStringArray("body", "camara_jugador", "skin_jugador")]
+[node name="Componentes" type="Node" parent="." unique_id=461629389]
+
+[node name="MovimientoManager" type="Node" parent="Componentes" unique_id=744814532 node_paths=PackedStringArray("body", "camara_jugador", "skin_jugador")]
 script = ExtResource("3_n1rdq")
+body = NodePath("../..")
+camara_jugador = NodePath("../../CamarasManager/SpringArmCamaraPrincipal/CamaraJugador")
+skin_jugador = NodePath("../../MeshInstance3D")
+velocidad = 22.0
+
+[node name="NitroManager" type="Node" parent="Componentes" unique_id=501582312 node_paths=PackedStringArray("body")]
+script = ExtResource("6_i5glh")
+body = NodePath("../..")
+
+[node name="HUDPlayer" parent="." unique_id=138912741 node_paths=PackedStringArray("body") instance=ExtResource("6_p2vvc")]
 body = NodePath("..")
-camara_jugador = NodePath("../CamarasManager/SpringArmCamaraPrincipal/CamaraJugador")
-skin_jugador = NodePath("../MeshInstance3D")
 
 [connection signal="text_submitted" from="ChatManager/LineEdit" to="." method="_on_line_edit_text_submitted"]
+[connection signal="nitro_activado" from="Componentes/NitroManager" to="CamarasManager" method="_on_nitro_activado"]
+[connection signal="nitro_activado" from="Componentes/NitroManager" to="Componentes/MovimientoManager" method="_on_nitro_activado"]
+[connection signal="nitro_desactivado" from="Componentes/NitroManager" to="CamarasManager" method="_on_nitro_desactivado"]
+[connection signal="nitro_desactivado" from="Componentes/NitroManager" to="Componentes/MovimientoManager" method="_on_nitro_desactivado"]
+[connection signal="valor_nitro_cambio" from="Componentes/NitroManager" to="HUDPlayer" method="set_progress_bar_nitro_value"]

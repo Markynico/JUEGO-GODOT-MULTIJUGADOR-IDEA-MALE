@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://crrwefxtvqv5k"]
+
+[ext_resource type="Script" uid="uid://mrehdu6yuctf" path="res://escenas/equipos_manager.gd" id="1_bfvnk"]
+
+[node name="EquiposManager" type="Control" unique_id=545837676 node_paths=PackedStringArray("layer_equipos")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_bfvnk")
+layer_equipos = NodePath("LayerEquipos")
+
+[node name="LayerEquipos" type="CanvasLayer" parent="." unique_id=1103155778]
+unique_name_in_owner = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LayerEquipos" unique_id=1978112209]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="LayerEquipos/VBoxContainer" unique_id=1925371033]
+layout_mode = 2
+text = "ELEGIR EQUIPO"
+horizontal_alignment = 1
+
+[node name="ButtonEquipoAzul" type="Button" parent="LayerEquipos/VBoxContainer" unique_id=1227833920]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "EQUIPO ROJO"
+
+[node name="ButtonEquipoRojo" type="Button" parent="LayerEquipos/VBoxContainer" unique_id=125550601]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "EQUIPO AZUL"
+
+[node name="ButtonCerrar" type="Button" parent="LayerEquipos/VBoxContainer" unique_id=721166671]
+layout_mode = 2
+text = "CERRAR"
+
+[connection signal="pressed" from="LayerEquipos/VBoxContainer/ButtonEquipoAzul" to="." method="_on_button_equipo_azul_pressed"]
+[connection signal="pressed" from="LayerEquipos/VBoxContainer/ButtonEquipoRojo" to="." method="_on_button_equipo_rojo_pressed"]
+[connection signal="pressed" from="LayerEquipos/VBoxContainer/ButtonCerrar" to="." method="_on_button_cerrar_pressed"]
