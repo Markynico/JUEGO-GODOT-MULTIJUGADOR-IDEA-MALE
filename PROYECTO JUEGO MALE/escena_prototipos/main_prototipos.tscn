@@ -26,6 +26,6 @@ material = SubResource("StandardMaterial3D_nbmnv")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0334892, 0)
 
 [node name="Pista 1" parent="." unique_id=1640144455 instance=ExtResource("5_kjfre")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.2377052, -142.30183)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.81895, -2.2377052, -140.00153)
 
 [connection signal="agregar_jugador" from="HostearYUnirseEjemplo" to="SpawnerJugadores" method="spawnear_jugador"]
