@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://i3enhkax7gbj"]
+
+[ext_resource type="Script" uid="uid://dyptkonv06e3o" path="res://escena_prototipos/pista_procedural.gd" id="1_cyni7"]
+
+[node name="pista procedural" type="Node3D" unique_id=1494475582]
+script = ExtResource("1_cyni7")
+modo = 1
+seed_pista = 3529102600
+cantidad_puntos = 24
+largo_pista = 5000.0
+variacion_altura = 30.0
+desviacion = 50.0
+probabilidad_recta = 0.5
+curvatura = 90.0
