@@ -7,17 +7,25 @@ extends Node
 @export var aceleracion : float = 40.0
 @export var desaceleracion : float = 70.0
 
+
 enum ESTADOS {IDLE, CAMINAR, SALTANDO, INACTIVO}
 var estado_actual : ESTADOS = ESTADOS.IDLE
 var ultimo_estado : ESTADOS
 
+
 @export var velocidad : float= 15
-@export var velocidad_salto : float = 5.5
+var velocidad_inicial : float
+
+@export var velocidad_maxima_nitro : float= 40
+var velocidad_objetivo : float
+@export var velocidad_salto : float = 6.6
+
 
 
 
 func _ready() -> void:
-	pass
+	velocidad_inicial = velocidad
+
 
 
 func _process(delta: float) -> void:
@@ -27,7 +35,10 @@ func _process(delta: float) -> void:
 	var direction = calcular_direccion()
 	rotar_personaje(direction, delta)
 	procesar_estado_actual(direction, delta)
+	#actualizar_velocidad(delta)
 	body.move_and_slide()
+
+
 
 
 func aplicar_gravedad(delta : float):
@@ -122,3 +133,19 @@ func calcular_direccion():
 	#PARA QUE SE MUEVA HACIA ADELANTE TENIENDO EN CUENTA LA DIRECCION DE LA CAMARA
 	direction = direction.rotated(Vector3.UP, camara_jugador.global_rotation.y)
 	return direction
+
+
+
+
+func _on_nitro_activado():
+	velocidad = velocidad_maxima_nitro
+
+func _on_nitro_desactivado():
+	velocidad = velocidad_inicial
+
+#func actualizar_velocidad(delta):
+	#if nitro_activado:
+		#velocidad_objetivo = velocidad_maxima_corriendo
+	#else:
+		#velocidad_objetivo = velocidad_inicial
+	#velocidad = move_toward(velocidad,velocidad_objetivo,35 * delta)

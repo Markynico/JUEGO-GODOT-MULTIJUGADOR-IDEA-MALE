@@ -2,17 +2,13 @@ extends CharacterBody3D
 class_name Player
 
 
-const SPEED = 5.0
-const JUMP_VELOCITY = 4.5
-
-
 func _enter_tree() -> void:
 	set_multiplayer_authority(name.to_int())
 
 func _ready() -> void:
 	if not is_multiplayer_authority():
 		%LineEdit.hide()
-	var nombre_steam : String = Steam.getPersonaName()
+	var nombre_steam : String = Steam.getPersonaName() #si estamos en modo ENET va a dar error, no se preocupen
 	print(nombre_steam)
 	setear_texto_label.rpc(nombre_steam)
 

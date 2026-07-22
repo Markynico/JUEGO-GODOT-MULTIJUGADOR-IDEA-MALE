@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://bgsstduc71f6u"]
+
+[ext_resource type="Script" uid="uid://bkstxx1lb5eh6" path="res://escenas/hud_player.gd" id="1_f34de"]
+
+[node name="HUDPlayer" type="Control" unique_id=138912741 node_paths=PackedStringArray("progress_bar_nitro")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_f34de")
+progress_bar_nitro = NodePath("ProgressBarNitro")
+
+[node name="ProgressBarNitro" type="ProgressBar" parent="." unique_id=2114606589]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 602.0
+offset_right = 428.0
+offset_bottom = 629.0
+step = 1.0
+value = 100.0
