@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://c5iii3fxon6cd" path="res://escenas/spawner_jugadores.tscn" id="4_lc11t"]
 [ext_resource type="PackedScene" uid="uid://i3enhkax7gbj" path="res://escena_prototipos/pista_procedural.tscn" id="6_sw5uh"]
 [ext_resource type="PackedScene" uid="uid://crrwefxtvqv5k" path="res://escenas/equipos_manager.tscn" id="6_wgupi"]
+[ext_resource type="Script" uid="uid://wbtv5svxcrql" path="res://escenas/sistema_checkpoints.gd" id="7_sw5uh"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nbmnv"]
 albedo_texture = ExtResource("2_dhx8v")
@@ -29,8 +30,22 @@ material = SubResource("StandardMaterial3D_nbmnv")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0334892, 0)
 
 [node name="pista procedural" parent="." unique_id=1494475582 instance=ExtResource("6_sw5uh")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.751793, -2.3745632, -10.30991)
-seed_pista = 3158010980
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.751793, 0.44184875, -10.30991)
+seed_pista = 740112654
+cantidad_puntos = 10
+variacion_altura = 100.0
+desviacion = 20.0
+probabilidad_recta = 0.2
+colinas = 5.0
+suavidad = 0.5
+curvatura = 90.0
+largo_recta_salida = 150.0
+radio_minimo = 500.0
+
+[node name="SistemaCheckpoints" type="Node3D" parent="pista procedural" unique_id=786747431]
+script = ExtResource("7_sw5uh")
+cantidad_checkpoints = 12
+metadata/_custom_type_script = "uid://wbtv5svxcrql"
 
 [connection signal="agregar_jugador" from="HostearYUnirseEjemplo" to="EquiposManager" method="_on_hostear_y_unirse_ejemplo_agregar_jugador"]
 [connection signal="agregar_jugador" from="HostearYUnirseEjemplo" to="SpawnerJugadores" method="spawnear_jugador"]
