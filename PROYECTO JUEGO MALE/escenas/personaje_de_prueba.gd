@@ -1,8 +1,8 @@
 extends CharacterBody3D
 class_name Player
 
-signal probando_cambiar_a_espectando #CAMBIAR A MODO ESPECTADOR INICIADO
-#o algo asi y continuarlo
+signal cambiar_a_modo_espectador #CAMBIAR A MODO ESPECTADOR INICIADO
+signal cambiar_a_modo_corredor
 
 
 func _enter_tree() -> void:

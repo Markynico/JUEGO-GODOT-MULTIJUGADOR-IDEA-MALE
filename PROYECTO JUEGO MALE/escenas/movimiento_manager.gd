@@ -30,6 +30,8 @@ func _ready() -> void:
 		return
 	velocidad_inicial = velocidad
 	collision_agachado.disabled = true
+	body.cambiar_a_modo_espectador.connect(_on_cambiar_a_modo_espectador)
+	body.cambiar_a_modo_corredor.connect(_on_cambiar_a_modo_corredor)
 
 
 
@@ -48,6 +50,8 @@ func _process(delta: float) -> void:
 
 
 func aplicar_gravedad(delta : float):
+	if estado_actual == ESTADOS.ESPECTANDO:
+		return #para no aplicar gravedad mientras estoy espectando, simplemente se queda ahi en un lugar random sin q lo vean y sin molestar a nadie
 	if not body.is_on_floor():
 		body.velocity += body.get_gravity() * delta
 
@@ -168,8 +172,10 @@ func calcular_direccion():
 	return direction
 
 
-func _on_espectando_iniciado():
-	cambiar_de_estado(ESTADOS.ESPECTANDO)
+
+func desactivar_ambas_colissiones(valor : bool):
+	collision_agachado.disabled = valor
+	collision_de_pie.disabled = valor
 
 
 func _on_nitro_activado():
@@ -178,9 +184,14 @@ func _on_nitro_activado():
 func _on_nitro_desactivado():
 	velocidad = velocidad_inicial
 
-#func actualizar_velocidad(delta):
-	#if nitro_activado:
-		#velocidad_objetivo = velocidad_maxima_corriendo
-	#else:
-		#velocidad_objetivo = velocidad_inicial
-	#velocidad = move_toward(velocidad,velocidad_objetivo,35 * delta)
+
+func _on_cambiar_a_modo_espectador():
+	cambiar_de_estado(ESTADOS.ESPECTANDO)
+	body.hide()
+	desactivar_ambas_colissiones(true)
+
+
+func _on_cambiar_a_modo_corredor():
+	body.show()
+	desactivar_ambas_colissiones(false)
+	cambiar_de_estado(ESTADOS.CAMINAR)

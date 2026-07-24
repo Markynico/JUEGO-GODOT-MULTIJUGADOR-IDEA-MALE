@@ -39,6 +39,7 @@ material = SubResource("StandardMaterial3D_lic63")
 
 [node name="Bordes" type="CSGPolygon3D" parent="Path3D" unique_id=1179690992]
 use_collision = true
+polygon = PackedVector2Array(-1, 0, 0, 0, 0, 2, -1, 2)
 mode = 2
 path_node = NodePath("..")
 path_interval_type = 0
@@ -53,6 +54,7 @@ path_joined = false
 
 [node name="Bordes2" type="CSGPolygon3D" parent="Path3D" unique_id=430771353]
 use_collision = true
+polygon = PackedVector2Array(20, 0, 21, 0, 21, 2, 20, 2)
 mode = 2
 path_node = NodePath("..")
 path_interval_type = 0

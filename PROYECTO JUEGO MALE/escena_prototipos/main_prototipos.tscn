@@ -23,6 +23,7 @@ size = Vector3(50, 1, 50)
 material = SubResource("StandardMaterial3D_nbmnv")
 
 [node name="EquiposManager" parent="." unique_id=545837676 instance=ExtResource("6_wgupi")]
+unique_name_in_owner = true
 
 [node name="HostearYUnirseEjemplo" parent="." unique_id=2129995875 instance=ExtResource("3_nbmnv")]
 
@@ -33,6 +34,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0334892, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.817734, 154.96474)
 
 [node name="TimerCorredores" type="Timer" parent="." unique_id=226892977]
+unique_name_in_owner = true
 wait_time = 90.0
 
 [node name="ButtonComenzarJuego" type="Button" parent="." unique_id=48106784]
@@ -42,10 +44,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -4.0
-offset_top = -4.0
-offset_right = 4.0
-offset_bottom = 4.0
+offset_left = -290.6855
+offset_top = -66.75
+offset_right = 290.6855
+offset_bottom = 66.75
 grow_horizontal = 2
 grow_vertical = 2
 text = "EMPEZAR JUEGO"
@@ -53,7 +55,28 @@ text = "EMPEZAR JUEGO"
 [node name="CorredoresManager" type="Node" parent="." unique_id=288606176]
 script = ExtResource("7_sw5uh")
 
+[node name="LabelTiempoCorredores" type="Label" parent="." unique_id=879666960]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 51.0
+grow_horizontal = 2
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 25
+text = "Siguiente corredor en: 90"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TimerSegundos" type="Timer" parent="." unique_id=470529027]
+unique_name_in_owner = true
+
+[connection signal="equipos_actualizados" from="EquiposManager" to="CorredoresManager" method="_on_equipos_manager_equipos_actualizados"]
 [connection signal="agregar_jugador" from="HostearYUnirseEjemplo" to="EquiposManager" method="_on_hostear_y_unirse_ejemplo_agregar_jugador"]
 [connection signal="agregar_jugador" from="HostearYUnirseEjemplo" to="SpawnerJugadores" method="spawnear_jugador"]
 [connection signal="jugador_spawneado" from="SpawnerJugadores" to="EquiposManager" method="_on_spawner_jugador_spawneado"]
 [connection signal="timeout" from="TimerCorredores" to="CorredoresManager" method="_on_timer_corredores_timeout"]
+[connection signal="pressed" from="ButtonComenzarJuego" to="CorredoresManager" method="_on_button_comenzar_juego_pressed"]
+[connection signal="timeout" from="TimerSegundos" to="CorredoresManager" method="_on_timer_segundos_timeout"]

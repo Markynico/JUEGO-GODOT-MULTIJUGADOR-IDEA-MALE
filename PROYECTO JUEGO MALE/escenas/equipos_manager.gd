@@ -21,7 +21,6 @@ signal equipos_actualizados(diccionario_equipos)
 @export var vbox_label_equipos : VBoxContainer
 @export var layer_equipos : CanvasLayer
 enum EQUIPOS {ROJO, AZUL, ELIGIENDO}
-var diccionario_equipos : Dictionary = {} #PARA LLENAR CON EL TIPO ID : EQUIPOS.ROJO o como sea mejor
 const SERVER_ID := 1
 
 
@@ -33,8 +32,9 @@ func _on_spawner_jugador_spawneado(id_multijugador: int, instancia_jugador: Play
 	mostrar_menu_equipos.rpc_id(id_multijugador)
 	if !multiplayer.is_server():
 		return
-	diccionario_equipos[id_multijugador] = {"nombre" : nombre_steam_jugador, "equipo" : EQUIPOS.ELIGIENDO}
-	sincronizar_equipos.rpc(diccionario_equipos)
+	Global.diccionario_equipos[id_multijugador] = {"nombre" : nombre_steam_jugador, "equipo" : EQUIPOS.ELIGIENDO}
+	Global.instancia_jugadores[id_multijugador] = instancia_jugador
+	sincronizar_equipos.rpc(Global.diccionario_equipos)
 
 
 @rpc("authority", "reliable", "call_local")
@@ -69,12 +69,12 @@ func solicitar_unirse_equipo(equipo:EQUIPOS):
 		id = multiplayer.get_unique_id() #sabiendo el el host se unio a un equipo, le damos el id 1
 	
 	
-	if diccionario_equipos.has(id): #si el diccionario tiene al jugador q esta eligiendo equipo
+	if Global.diccionario_equipos.has(id): #si el diccionario tiene al jugador q esta eligiendo equipo
 		#que en teoria siempre lo va a tener, no deberia haber forma de que alguien eliga equipo
 		#sin antes spawnear
-		diccionario_equipos[id]["equipo"] = equipo
+		Global.diccionario_equipos[id]["equipo"] = equipo
 	
-	sincronizar_equipos.rpc(diccionario_equipos)  #llamamos a la funcion con .rpc porque ahora si queremos q TODOS la ejecuten
+	sincronizar_equipos.rpc(Global.diccionario_equipos)  #llamamos a la funcion con .rpc porque ahora si queremos q TODOS la ejecuten
 	#en resumen le digo a todas las compus sincronicemos los equipos con este nuevo diccionario
 	#print(diccionario_equipos)
 
@@ -83,7 +83,7 @@ func solicitar_unirse_equipo(equipo:EQUIPOS):
 @rpc("authority","reliable","call_local")
 #authority es pq solamente la autoridad (el servidor) puede invocar esta RPC
 func sincronizar_equipos(nuevo_diccionario:Dictionary): #aca le avisamos a todos q escriban en su diccionario, actualicen su hud etc etc
-	diccionario_equipos = nuevo_diccionario
+	Global.diccionario_equipos = nuevo_diccionario
 	
 	#aca ya todos los jugadores tienen el miiismo diccionario
 	#el resto es solo retocar el hud para ver nombre, id, equipo etc
@@ -91,9 +91,9 @@ func sincronizar_equipos(nuevo_diccionario:Dictionary): #aca le avisamos a todos
 	for hijo in vbox_label_equipos.get_children():
 		hijo.queue_free() #limpio el hud viejo
 	
-	for id in diccionario_equipos.keys():
+	for id in Global.diccionario_equipos.keys():
 		var label_nuevo := Label.new() #por cada id hago un label nuevo
-		var nombre_equipo = diccionario_equipos[id]["equipo"] #obtengo el nombre del equipo
+		var nombre_equipo = Global.diccionario_equipos[id]["equipo"] #obtengo el nombre del equipo
 		
 		match nombre_equipo: #como era un enum necesito pasarlo a string
 			EQUIPOS.AZUL:
@@ -105,17 +105,17 @@ func sincronizar_equipos(nuevo_diccionario:Dictionary): #aca le avisamos a todos
 				
 		print("NOMBRE EQUIPO VALE: ", nombre_equipo)
 		#label_nuevo.text = "Jugador %s -> %s" % [id, nombre_equipo]
-		label_nuevo.text = "ID " + str(id) + " - " + diccionario_equipos[id]["nombre"] + " -->: " + nombre_equipo
+		label_nuevo.text = "ID " + str(id) + " - " + Global.diccionario_equipos[id]["nombre"] + " -->: " + nombre_equipo
 		
 		#label_nuevo.text = "Jugador: " + diccionario_equipos[id]["nombre"] + " -->: " + nombre_equipo
 	
 		vbox_label_equipos.add_child(label_nuevo)
-	print(diccionario_equipos)
-	#equipos_actualizados.emit(diccionario_equipos) #no hace nada todavia la deje x las dudas
+	print(Global.diccionario_equipos)
+	equipos_actualizados.emit(Global.diccionario_equipos) #planeo usarla para avisar al juego q ya estan los equipos, mostrar boton de comenzar juego y etc
 
 
 func obtener_equipo(peer_id: int, equipo: EQUIPOS): #no la uso no le demos bola x ahora
-	return diccionario_equipos.get(peer_id) == equipo 
+	return Global.diccionario_equipos.get(peer_id) == equipo 
 
 
 

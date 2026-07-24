@@ -6,6 +6,11 @@ class_name CamaraLibre
 @export var sensibilidad_mouse : float = 0.002
 @export var activo : bool = false #me parece q podria sacarlo
 @export var marker_posicion : Marker3D
+
+@export var escena_pelotita : PackedScene
+
+@export var fuerza_disparo : float = 20.0
+
 var move_target : Vector3 
 
 var movimiento_y : float = 0.0
@@ -37,7 +42,38 @@ func _input(event: InputEvent) -> void:
 		#rotate_y(-event.relative.x * sensibilidad_mouse)
 		#camara.rotate_x(-event.relative.y * sensibilidad_mouse)
 		#camara.rotation.x = clamp(camara.rotation.x, deg_to_rad(-89), deg_to_rad(89)) #para limitar la rotacion
+	
+	#probando meterle funcionalidad de dispara cosas desde la camara:
+	if Input.is_action_just_pressed("click_izq"):
+		var mouse = get_viewport().get_mouse_position()
+		var origen = global_position
+		var direccion = project_ray_normal(mouse)
+		disparar_probando.rpc(origen, direccion) #hacer q todas las compus vean la pelotita q dispara la otra persona
 
+
+@rpc("authority","reliable","call_local")
+func disparar_probando(origen: Vector3, direccion: Vector3):
+	var pelota = escena_pelotita.instantiate()
+	get_tree().current_scene.add_child(pelota)
+
+	pelota.global_position = origen
+	pelota.linear_velocity = direccion * fuerza_disparo
+	
+	#var instancia_pelotita : RigidBody3D = escena_pelotita.instantiate()
+	##print("CLICK IZQ")
+	#get_tree().current_scene.add_child(instancia_pelotita)
+	##posiciono con la cmara
+	##instancia_pelotita.global_position = global_position
+	#
+	#var mouse = get_viewport().get_mouse_position()
+#
+	##var origen = project_ray_origin(mouse)
+	#var origen = global_position_camara
+	#var direccion = project_ray_normal(mouse)
+#
+	#instancia_pelotita.global_position = origen
+	#
+	#instancia_pelotita.linear_velocity = direccion * fuerza_disparo
 
 
 func _process(delta: float) -> void: #en process anda MUCHISIMO mejor que en physic process, sin nada de jitter

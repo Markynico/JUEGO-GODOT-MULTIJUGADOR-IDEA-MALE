@@ -23,6 +23,7 @@ func _ready() -> void:
 	if not body.is_multiplayer_authority():
 		return
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	#_camara_espectador.current = true #esto dsp sacarlo para q no pise el estado real al iniciar
 	_camara_jugador.current = true #esto dsp sacarlo para q no pise el estado real al iniciar
 	fov_objetivo = fov_minimo
 
