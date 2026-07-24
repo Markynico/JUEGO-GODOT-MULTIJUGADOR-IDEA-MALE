@@ -1,21 +1,30 @@
+@icon("res://2d/iconos_personalizados/camara_manager.png")
 class_name CamarasManager
 extends Node3D
 #hago un manager centralizar donde se van a cambiar las camaras
 #para cambiar entre camara jugador y camara espectando
 
 @export var body : Player
-@export var camara_jugador : Camera3D
+@export var _camara_jugador : Camera3D
+@export var _camara_espectador : CamaraLibre
+@export var spring_arm_camara_jugador : CamaraPrincipalPlayer
 @export var fov_minimo : float = 85
 @export var fov_maximo_nitro : float = 120
 var fov_objetivo : float #cuando activo el nitro el fov objetivo es el maximo y cuando lo desactivo es el minimo
 
 
-# Called when the node enters the scene tree for the first time.
+#LO RELACIONADO A CAMBIO DE CAMARAS
+enum CAMARAS {JUGADOR , ESPECTADOR}
+@export var camara_activa : CAMARAS = CAMARAS.JUGADOR
+
+
+
 func _ready() -> void:
 	if not body.is_multiplayer_authority():
 		return
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	camara_jugador.current = true
+	#_camara_espectador.current = true #esto dsp sacarlo para q no pise el estado real al iniciar
+	_camara_jugador.current = true #esto dsp sacarlo para q no pise el estado real al iniciar
 	fov_objetivo = fov_minimo
 
 
@@ -49,4 +58,19 @@ func _on_nitro_desactivado():
 
 
 func actualizar_fov(delta):
-	camara_jugador.fov = move_toward(camara_jugador.fov,fov_objetivo, 20 * delta)
+	_camara_jugador.fov = move_toward(_camara_jugador.fov,fov_objetivo, 20 * delta)
+
+
+func _on_activar_camara_jugador():
+	_camara_jugador.current = true
+	camara_activa = CAMARAS.JUGADOR
+	_camara_espectador.desactivar_camara()
+	spring_arm_camara_jugador.activar_camara()
+
+
+func _on_activar_camara_espectador():
+	_camara_espectador.current = true
+	camara_activa = CAMARAS.ESPECTADOR
+	spring_arm_camara_jugador.desactivar_camara()
+	_camara_espectador.activar_camara()
+	
