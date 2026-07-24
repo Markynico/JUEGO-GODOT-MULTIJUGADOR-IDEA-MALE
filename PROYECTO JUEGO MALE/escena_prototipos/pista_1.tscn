@@ -68,27 +68,7 @@ path_continuous_u = true
 path_u_distance = 1.0
 path_joined = false
 
-[node name="SistemaCheckpoints" type="Node3D" parent="." unique_id=372708231]
+[node name="SistemaCheckpoints" type="Node3D" parent="." unique_id=1824024936]
 script = ExtResource("3_lvrqt")
-cantidad_checkpoints = 5
-tipo = 1
-ancho = 20.0
+cantidad_checkpoints = 10
 metadata/_custom_type_script = "uid://wbtv5svxcrql"
-
-[node name="Largada" type="Area3D" parent="SistemaCheckpoints" unique_id=2054275155]
-transform = Transform3D(-0.3846153, 0, -0.923077, 0, 1, 0, 0.923077, 0, -0.3846153, -209.55534, 4, -142.51434)
-
-[node name="Checkpoint1" type="Area3D" parent="SistemaCheckpoints" unique_id=759354552]
-transform = Transform3D(0.26653963, -0.0030885073, -0.9638191, 0.0115866475, 0.9999329, 3.453714e-10, 0.96375436, -0.01116743, 0.26655754, 179.72258, 4.1158667, -138.00061)
-
-[node name="Checkpoint2" type="Area3D" parent="SistemaCheckpoints" unique_id=1681476823]
-transform = Transform3D(-0.98546743, 0.022841126, 0.16832224, 0.02317174, 0.99973154, 2.3679078e-10, -0.16827704, 0.003900319, -0.9857321, 433.5559, 4.2317176, 66.38837)
-
-[node name="Checkpoint3" type="Area3D" parent="SistemaCheckpoints" unique_id=1776684296]
-transform = Transform3D(-0.93260133, 0.04553235, 0.3580245, 0.030321715, 0.9983876, -0.047987938, -0.3596322, -0.0338977, -0.9324782, 120.3193, 5.3281436, 259.77368)
-
-[node name="@Area3D@24074" type="Area3D" parent="SistemaCheckpoints" unique_id=606262654]
-transform = Transform3D(0.97086054, 0.013768397, -0.23924944, 0.008272697, 0.9958277, 0.09087831, 0.23950246, -0.0902094, 0.96669585, -112.5944, 10.946524, 204.07593)
-
-[node name="@Area3D@24076" type="Area3D" parent="SistemaCheckpoints" unique_id=21447730]
-transform = Transform3D(0.9333965, 0.010814423, 0.35868382, -0.01158532, 0.9999329, 3.125278e-14, -0.35865974, -0.004155467, 0.93345916, -395.4672, 3.8841467, -18.220238)

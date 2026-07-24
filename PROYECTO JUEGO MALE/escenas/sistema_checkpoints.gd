@@ -2,8 +2,6 @@
 extends Node3D
 class_name SistemaCheckpoints
 
-## Nodo drop-in: se agrega como hijo (o hermano) de una pista con Path3D y
-## genera automaticamente la largada, la meta y los checkpoints sobre la curva.
 
 signal checkpoint_alcanzado(jugador: Player, indice: int)
 signal vuelta_completada(jugador: Player, vuelta: int)
@@ -21,28 +19,23 @@ enum Tipo { AUTO, CIRCUITO, SPRINT }
 	set(value):
 		invertir_direccion = value
 		_regenerar_en_editor()
-## AUTO detecta segun la curva (cerrada = circuito, abierta = sprint).
 @export var tipo: Tipo = Tipo.AUTO:
 	set(value):
 		tipo = value
 		notify_property_list_changed()
 		_regenerar_en_editor()
-## Solo se usa si la pista es un circuito.
 @export var vueltas: int = 3:
 	set(value):
 		vueltas = maxi(value, 1)
-## Metros de pista libres antes de la linea de largada.
 @export var offset_largada: float = 30.0:
 	set(value):
 		offset_largada = maxf(value, 0.0)
 		_regenerar_en_editor()
-## Metros de pista libres despues de la meta (solo sprint).
 @export var offset_meta: float = 30.0:
 	set(value):
 		offset_meta = maxf(value, 0.0)
 		_regenerar_en_editor()
 @export_group("Dimensiones de los arcos")
-## 0 = detectar ancho_de_pista de la pista automaticamente.
 @export var ancho: float = 0.0:
 	set(value):
 		ancho = maxf(value, 0.0)
@@ -55,7 +48,6 @@ enum Tipo { AUTO, CIRCUITO, SPRINT }
 	set(value):
 		mostrar_gizmos = value
 		_regenerar_en_editor()
-## Muestra los arcos tambien durante la partida.
 @export var visible_en_juego: bool = true:
 	set(value):
 		visible_en_juego = value
@@ -64,16 +56,54 @@ enum Tipo { AUTO, CIRCUITO, SPRINT }
 var camino: Path3D
 var es_circuito: bool = true
 var arcos: Array[Area3D] = []
-# Por jugador: {"siguiente": indice del proximo arco, "vuelta": vuelta actual}
 var progreso: Dictionary = {}
+var carrera_activa: bool = true
+var hud: CanvasLayer
+var label_progreso: Label
+var label_ganador: Label
 
 func _ready() -> void:
 	var pista := get_parent()
 	if pista and pista.has_signal("pista_generada"):
 		pista.pista_generada.connect(generar)
-	# La pista procedural genera su Path3D en su propio _ready; esperar un frame.
+	if not Engine.is_editor_hint():
+		_crear_hud()
 	await get_tree().process_frame
 	generar()
+
+func _crear_hud() -> void:
+	hud = CanvasLayer.new()
+	hud.name = "HUDCarrera"
+	label_progreso = Label.new()
+	label_progreso.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	label_progreso.position.y = 10.0
+	label_progreso.add_theme_font_size_override("font_size", 24)
+	label_progreso.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	hud.add_child(label_progreso)
+	label_ganador = Label.new()
+	label_ganador.set_anchors_preset(Control.PRESET_CENTER)
+	label_ganador.add_theme_font_size_override("font_size", 48)
+	label_ganador.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	label_ganador.hide()
+	hud.add_child(label_ganador)
+	add_child(hud)
+
+func _actualizar_hud(datos: Dictionary) -> void:
+	if label_progreso == null:
+		return
+	var total := arcos.size()
+	var texto := ""
+	if es_circuito:
+		texto = "Vuelta %d/%d  -  Checkpoint %d/%d" % [mini(datos.vuelta, vueltas), vueltas, datos.siguiente, total]
+	else:
+		texto = "Checkpoint %d/%d" % [datos.siguiente, total - 1]
+	label_progreso.text = texto
+
+func _nombre_jugador(jugador: Player) -> String:
+	var etiqueta := jugador.find_child("Label3D", true, false)
+	if etiqueta and etiqueta is Label3D and not (etiqueta as Label3D).text.is_empty():
+		return (etiqueta as Label3D).text
+	return jugador.name
 
 func generar() -> void:
 	_limpiar()
@@ -84,12 +114,10 @@ func generar() -> void:
 	var curva := camino.curve
 	es_circuito = curva.closed if tipo == Tipo.AUTO else tipo == Tipo.CIRCUITO
 	var largo := curva.get_baked_length()
-	# Cantidad de arcos: largada + checkpoints (+ meta separada solo en sprint).
 	var total := cantidad_checkpoints + (1 if es_circuito else 2)
 	for i in total:
 		var distancia: float
 		if es_circuito:
-			# La largada arranca con offset y los arcos reparten la vuelta completa.
 			var paso := largo * float(i) / float(total)
 			distancia = fposmod(offset_largada + (-paso if invertir_direccion else paso), largo)
 		else:
@@ -104,9 +132,13 @@ func generar() -> void:
 			nombre = "Meta" if (not es_circuito and i == total - 1) else "Checkpoint%d" % i
 		_crear_arco(nombre, i, transformada)
 	progreso.clear()
+	carrera_activa = true
+	if label_ganador:
+		label_ganador.hide()
+	if label_progreso:
+		label_progreso.text = "Cruza la largada para empezar"
 
 func _buscar_camino() -> Path3D:
-	# Primero en el padre (nodo pista), despues en toda la escena.
 	var raiz := get_parent()
 	for candidato in [raiz, get_tree().current_scene if is_inside_tree() and not Engine.is_editor_hint() else null]:
 		if candidato == null:
@@ -132,7 +164,6 @@ func _buscar_path3d(nodo: Node) -> Path3D:
 func _ancho_arco() -> float:
 	if ancho > 0.0:
 		return ancho
-	# Detectar el ancho de la pista si el nodo lo expone.
 	for nodo in [get_parent(), camino.get_parent() if camino else null]:
 		if nodo and "ancho_de_pista" in nodo:
 			return nodo.ancho_de_pista
@@ -148,7 +179,6 @@ func _crear_arco(nombre: String, indice: int, transformada: Transform3D) -> void
 	forma.shape = caja
 	area.add_child(forma)
 	add_child(area)
-	# La curva es el borde izquierdo de la pista: centrar el arco sobre el ancho.
 	var global_camino := camino.global_transform * transformada
 	area.global_transform = global_camino
 	area.global_position = global_camino.origin + global_camino.basis.x * (w * 0.5) + Vector3.UP * (alto * 0.5)
@@ -197,13 +227,28 @@ func _al_entrar(cuerpo: Node3D, indice: int) -> void:
 			datos.vuelta += 1
 			datos.paso_por_todos = false
 			if datos.vuelta > vueltas:
-				carrera_terminada.emit(jugador)
-				progreso.erase(jugador)
+				_finalizar(jugador)
 				return
 		if indice == total - 1:
 			datos.paso_por_todos = true
 	else:
 		datos.siguiente = indice + 1
 		if indice == total - 1:
-			carrera_terminada.emit(jugador)
-			progreso.erase(jugador)
+			_finalizar(jugador)
+			return
+	if jugador.is_multiplayer_authority():
+		_actualizar_hud(datos)
+
+func _finalizar(jugador: Player) -> void:
+	carrera_terminada.emit(jugador)
+	progreso.erase(jugador)
+	if carrera_activa and multiplayer.is_server():
+		carrera_activa = false
+		_anunciar_ganador.rpc(_nombre_jugador(jugador))
+
+@rpc("authority", "call_local", "reliable")
+func _anunciar_ganador(nombre: String) -> void:
+	carrera_activa = false
+	if label_ganador:
+		label_ganador.text = "GANADOR: %s" % nombre
+		label_ganador.show()
