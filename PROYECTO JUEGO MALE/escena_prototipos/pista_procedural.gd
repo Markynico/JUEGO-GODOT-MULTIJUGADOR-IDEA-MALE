@@ -3,6 +3,8 @@ extends Node3D
 
 enum Modo { CIRCUITO, SPRINT }
 
+signal pista_generada
+
 @export_tool_button("Nueva Seed", "RandomNumberGenerator") var boton_nueva_seed := nueva_seed
 @export var modo: Modo = Modo.CIRCUITO:
 	set(value):
@@ -52,6 +54,16 @@ enum Modo { CIRCUITO, SPRINT }
 @export_range(0.0, 90.0) var curvatura: float = 30.0:
 	set(value):
 		curvatura = value
+		if is_inside_tree():
+			generar()
+@export var largo_recta_salida: float = 80.0:
+	set(value):
+		largo_recta_salida = maxf(value, 0.0)
+		if is_inside_tree():
+			generar()
+@export var radio_minimo: float = 40.0:
+	set(value):
+		radio_minimo = maxf(value, 0.0)
 		if is_inside_tree():
 			generar()
 @export var resolver_cruces: bool = true:
@@ -104,6 +116,7 @@ func generar() -> void:
 	for csg in [pista, borde_izq, borde_der]:
 		csg.path_joined = modo == Modo.CIRCUITO
 	_actualizar_poligonos()
+	pista_generada.emit()
 
 func _asegurar_nodos() -> void:
 	if camino:
@@ -144,7 +157,7 @@ func _generar_curva() -> Curve3D:
 	var curva := Curve3D.new()
 	curva.closed = modo == Modo.CIRCUITO
 	ajustes = {
-		"variacion_altura": _desviar(rng, variacion_altura, 0.0, 40.0),
+		"variacion_altura": _desviar(rng, variacion_altura, 0.0, maxf(40.0, variacion_altura)),
 		"colinas": _desviar(rng, colinas, 0.5, 8.0),
 		"suavidad": _desviar(rng, suavidad, maxf(0.1, suavidad - 0.15), minf(1.0, suavidad + 0.15)),
 		"probabilidad_recta": _desviar(rng, probabilidad_recta, 0.0, 1.0),
@@ -159,22 +172,59 @@ func _generar_curva() -> Curve3D:
 	var giro_base := TAU / float(cantidad_puntos) if es_circuito else 0.0
 	var posicion := Vector3.ZERO
 	var direccion := 0.0
+	var alturas: Array[float] = []
 	for i in cantidad_puntos:
-		var altura := _altura_en(ruido, TAU * float(i) / float(cantidad_puntos))
-		puntos.append(Vector3(posicion.x, altura, posicion.z))
-		direccion += giro_base + deg_to_rad(rng.randf_range(-ajustes.curvatura, ajustes.curvatura))
-		posicion += Vector3(cos(direccion), 0.0, sin(direccion)) * espaciado
+		alturas.append(_altura_en(ruido, TAU * float(i) / float(cantidad_puntos)))
+	var alt_min: float = alturas.min()
+	var alt_max: float = alturas.max()
+	var rango := alt_max - alt_min
+	for i in cantidad_puntos:
+		if rango > 0.0001:
+			alturas[i] = (alturas[i] - alt_min) / rango * ajustes.variacion_altura
+		else:
+			alturas[i] = 0.0
+	var indice_minimo := alturas.find(0.0)
+	if indice_minimo > 0:
+		var rotadas: Array[float] = []
+		for i in cantidad_puntos:
+			rotadas.append(alturas[(i + indice_minimo) % cantidad_puntos])
+		alturas = rotadas
+	var largo_salida := clampf(largo_recta_salida, 0.0, largo_pista * 0.4)
+	var usa_salida := largo_salida > 0.0 and cantidad_puntos > 3
+	var espaciado_resto := espaciado
+	if usa_salida:
+		var pasos_restantes := (cantidad_puntos if es_circuito else cantidad_puntos - 1) - 1
+		espaciado_resto = (largo_pista - largo_salida) / float(pasos_restantes)
+		alturas[0] = 0.0
+		alturas[1] = 0.0
+	var giro_maximo := TAU
+	if radio_minimo > 0.0:
+		giro_maximo = 2.0 * atan(espaciado_resto / (2.0 * radio_minimo))
+		giro_maximo = maxf(giro_maximo, absf(giro_base))
+	for i in cantidad_puntos:
+		puntos.append(Vector3(posicion.x, alturas[i], posicion.z))
+		var delta := giro_base + deg_to_rad(rng.randf_range(-ajustes.curvatura, ajustes.curvatura))
+		var paso := espaciado_resto
+		if usa_salida and i == 0:
+			delta = 0.0
+			paso = largo_salida
+		elif usa_salida and i <= 2:
+			delta = clampf(delta, -giro_maximo, giro_maximo) * (0.35 if i == 1 else 0.7)
+		direccion += clampf(delta, -giro_maximo, giro_maximo)
+		posicion += Vector3(cos(direccion), 0.0, sin(direccion)) * paso
 	if es_circuito:
 		var error_cierre := posicion
-		for i in cantidad_puntos:
-			var peso := float(i) / float(cantidad_puntos)
+		for i in range(2, cantidad_puntos):
+			var peso := smoothstep(0.0, 1.0, float(i - 1) / float(cantidad_puntos - 1))
 			puntos[i] -= Vector3(error_cierre.x * peso, 0.0, error_cierre.z * peso)
 	rectas.clear()
 	var ultimo_segmento := cantidad_puntos if modo == Modo.CIRCUITO else cantidad_puntos - 1
 	for i in ultimo_segmento:
 		if rng.randf() < ajustes.probabilidad_recta:
 			rectas.append(i)
-	var origen := puntos[0]
+	if usa_salida and not rectas.has(0):
+		rectas.append(0)
+	var origen := Vector3(puntos[0].x, 0.0, puntos[0].z)
 	for i in cantidad_puntos:
 		puntos[i] -= origen
 	var salida := puntos[1] - puntos[0]

@@ -106,13 +106,15 @@ script = ExtResource("3_n1rdq")
 body = NodePath("../..")
 camara_jugador = NodePath("../../CamarasManager/SpringArmCamaraPrincipal/CamaraJugador")
 skin_jugador = NodePath("../../MeshInstance3D")
+velocidad = 60.0
+velocidad_maxima_nitro = 75.0
 collision_de_pie = NodePath("../../CollisionDePie")
 collision_agachado = NodePath("../../CollisionAgachado")
-velocidad = 22.0
 
 [node name="NitroManager" type="Node" parent="Componentes" unique_id=501582312 node_paths=PackedStringArray("body")]
 script = ExtResource("6_i5glh")
 body = NodePath("../..")
+consumo_nitro = 10.0
 
 [node name="HUDPlayer" parent="." unique_id=138912741 node_paths=PackedStringArray("body") instance=ExtResource("6_p2vvc")]
 body = NodePath("..")

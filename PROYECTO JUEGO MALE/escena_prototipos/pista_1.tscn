@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://6pcmr5sv6tqh" path="res://escena_prototipos/pista_1.gd" id="1_lic63"]
 [ext_resource type="Texture2D" uid="uid://ylaogtl7p63" path="res://escena_prototipos/textura_prototipo/texture_04.png" id="1_wrpun"]
+[ext_resource type="Script" uid="uid://wbtv5svxcrql" path="res://escenas/sistema_checkpoints.gd" id="3_lvrqt"]
 
 [sub_resource type="Curve3D" id="Curve3D_0gflj"]
 closed = true
@@ -66,3 +67,8 @@ path_local = true
 path_continuous_u = true
 path_u_distance = 1.0
 path_joined = false
+
+[node name="SistemaCheckpoints" type="Node3D" parent="." unique_id=1824024936]
+script = ExtResource("3_lvrqt")
+cantidad_checkpoints = 10
+metadata/_custom_type_script = "uid://wbtv5svxcrql"
