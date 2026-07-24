@@ -1,4 +1,4 @@
-#@icon("res://assets-2d/iconos_custom/icono_camara_custom.png")
+@icon("res://2d/iconos_personalizados/icono_camara_custom.png")
 extends Camera3D
 class_name CamaraLibre
 

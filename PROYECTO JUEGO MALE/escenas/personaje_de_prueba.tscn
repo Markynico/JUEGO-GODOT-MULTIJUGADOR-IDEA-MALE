@@ -72,22 +72,24 @@ offset_top = -55.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="CamarasManager" type="Node3D" parent="." unique_id=1308985841 node_paths=PackedStringArray("body", "camara_jugador")]
+[node name="CamarasManager" type="Node3D" parent="." unique_id=1308985841 node_paths=PackedStringArray("body", "_camara_jugador", "_camara_espectador", "spring_arm_camara_jugador")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5335453, 0)
 script = ExtResource("2_44lwu")
 body = NodePath("..")
-camara_jugador = NodePath("SpringArmCamaraPrincipal/CamaraJugador")
+_camara_jugador = NodePath("SpringArmCamaraPrincipal/CamaraJugador")
+_camara_espectador = NodePath("CameraEspectando")
+spring_arm_camara_jugador = NodePath("SpringArmCamaraPrincipal")
 
-[node name="SpringArmCamaraPrincipal" type="SpringArm3D" parent="CamarasManager" unique_id=1847829506]
+[node name="SpringArmCamaraPrincipal" type="SpringArm3D" parent="CamarasManager" unique_id=1847829506 node_paths=PackedStringArray("body")]
 shape = SubResource("SphereShape3D_8sxmm")
 spring_length = 6.0
 script = ExtResource("2_ejlb5")
+body = NodePath("../..")
 
 [node name="CamaraJugador" type="Camera3D" parent="CamarasManager/SpringArmCamaraPrincipal" unique_id=1560346745]
 fov = 85.0
 
 [node name="CameraEspectando" type="Camera3D" parent="CamarasManager" unique_id=2055501495]
-current = true
 script = ExtResource("4_p2vvc")
 activo = true
 
@@ -107,6 +109,8 @@ body = NodePath("../..")
 [node name="HUDPlayer" parent="." unique_id=138912741 node_paths=PackedStringArray("body") instance=ExtResource("6_p2vvc")]
 body = NodePath("..")
 
+[connection signal="probando_cambiar_a_espectando" from="." to="CamarasManager" method="_on_activar_camara_espectador"]
+[connection signal="probando_cambiar_a_espectando" from="." to="Componentes/MovimientoManager" method="_on_espectando_iniciado"]
 [connection signal="text_submitted" from="ChatManager/LineEdit" to="." method="_on_line_edit_text_submitted"]
 [connection signal="nitro_activado" from="Componentes/NitroManager" to="CamarasManager" method="_on_nitro_activado"]
 [connection signal="nitro_activado" from="Componentes/NitroManager" to="Componentes/MovimientoManager" method="_on_nitro_activado"]

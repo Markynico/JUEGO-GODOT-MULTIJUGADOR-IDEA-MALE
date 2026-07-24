@@ -38,12 +38,12 @@ horizontal_alignment = 1
 [node name="ButtonEquipoAzul" type="Button" parent="LayerEquipos/VBoxContainer" unique_id=1227833920]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "EQUIPO ROJO"
+text = "EQUIPO AZUL"
 
 [node name="ButtonEquipoRojo" type="Button" parent="LayerEquipos/VBoxContainer" unique_id=125550601]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "EQUIPO AZUL"
+text = "EQUIPO ROJO"
 
 [node name="ButtonCerrar" type="Button" parent="LayerEquipos/VBoxContainer" unique_id=721166671]
 layout_mode = 2

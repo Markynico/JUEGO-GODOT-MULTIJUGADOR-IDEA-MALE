@@ -8,7 +8,7 @@ extends Node
 @export var desaceleracion : float = 70.0
 
 
-enum ESTADOS {IDLE, CAMINAR, SALTANDO, INACTIVO}
+enum ESTADOS {IDLE, CAMINAR, SALTANDO, ESPECTANDO}
 var estado_actual : ESTADOS = ESTADOS.IDLE
 var ultimo_estado : ESTADOS
 
@@ -35,7 +35,6 @@ func _process(delta: float) -> void:
 	var direction = calcular_direccion()
 	rotar_personaje(direction, delta)
 	procesar_estado_actual(direction, delta)
-	#actualizar_velocidad(delta)
 	body.move_and_slide()
 
 
@@ -75,7 +74,7 @@ func matchear_animaciones():
 			body.ejecutar_animacion_caminar.emit()
 		ESTADOS.SALTANDO:
 			body.ejecutar_animacion_salto.emit()
-		ESTADOS.INACTIVO:
+		ESTADOS.ESPECTANDO:
 			body.ejecutar_animacion_idle.emit()
 
 
@@ -88,7 +87,14 @@ func procesar_estado_actual(direccion : Vector3 , delta : float):
 			procesar_caminar(direccion, delta)
 		ESTADOS.SALTANDO:
 			procesar_saltando(direccion, delta)
+		ESTADOS.ESPECTANDO:
+			procesar_espectando(delta)
 
+
+func procesar_espectando(delta : float):
+	desacelerar_a_quieto(delta)
+	#no agrego ningun cambiar de estado aca porque el estado se cambiaria por reglas del juego
+	#no por inputs del usuario como en el estado idle
 
 func manejar_salto(): #me permite cambiar al estado saltando
 	if Input.is_action_just_pressed("espacio") and body.is_on_floor():
@@ -119,7 +125,7 @@ func procesar_caminar(direccion : Vector3, delta: float):
 
 
 func rotar_personaje(direction : Vector3, delta : float):
-	if estado_actual==ESTADOS.INACTIVO:
+	if estado_actual==ESTADOS.ESPECTANDO:
 		return
 	#PARA HACER QUE EL PJ GIRE EN DIRECCION DE DONDE SE QUIERE MOVER (VISUAL POR ESO SOLO EL MESH)
 	if direction.length() > 0.01:
@@ -135,6 +141,8 @@ func calcular_direccion():
 	return direction
 
 
+func _on_espectando_iniciado():
+	cambiar_de_estado(ESTADOS.ESPECTANDO)
 
 
 func _on_nitro_activado():

@@ -33,3 +33,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.817734, 154.96474)
 
 [connection signal="agregar_jugador" from="HostearYUnirseEjemplo" to="EquiposManager" method="_on_hostear_y_unirse_ejemplo_agregar_jugador"]
 [connection signal="agregar_jugador" from="HostearYUnirseEjemplo" to="SpawnerJugadores" method="spawnear_jugador"]
+[connection signal="jugador_spawneado" from="SpawnerJugadores" to="EquiposManager" method="_on_spawner_jugador_spawneado"]
