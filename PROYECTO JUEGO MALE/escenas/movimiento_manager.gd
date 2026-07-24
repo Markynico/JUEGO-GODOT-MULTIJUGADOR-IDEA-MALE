@@ -7,8 +7,10 @@ extends Node
 @export var aceleracion : float = 40.0
 @export var desaceleracion : float = 70.0
 
+@export var collision_de_pie : CollisionShape3D
+@export var collision_agachado : CollisionShape3D
 
-enum ESTADOS {IDLE, CAMINAR, SALTANDO, ESPECTANDO}
+enum ESTADOS {IDLE, CAMINAR, SALTANDO, DESLIZANDOSE , ESPECTANDO}
 var estado_actual : ESTADOS = ESTADOS.IDLE
 var ultimo_estado : ESTADOS
 
@@ -24,7 +26,10 @@ var velocidad_objetivo : float
 
 
 func _ready() -> void:
+	if not body.is_multiplayer_authority():
+		return
 	velocidad_inicial = velocidad
+	collision_agachado.disabled = true
 
 
 
@@ -34,6 +39,8 @@ func _process(delta: float) -> void:
 	aplicar_gravedad(delta)
 	var direction = calcular_direccion()
 	rotar_personaje(direction, delta)
+	#PRUEBO DESLIZANDOSE
+	manejar_deslizandose()
 	procesar_estado_actual(direction, delta)
 	body.move_and_slide()
 
@@ -61,6 +68,10 @@ func cambiar_de_estado(estado_nuevo : ESTADOS):
 	if estado_actual==estado_nuevo:
 		return
 	ultimo_estado = estado_actual
+	if ultimo_estado == ESTADOS.DESLIZANDOSE:
+		#como estaba deslizando aca aviso de volver a acticar el collision
+		collision_agachado.disabled = true
+		collision_de_pie.disabled = false
 	estado_actual = estado_nuevo
 	matchear_animaciones() #todavia sin uso, lo dejo para mas adelante
 
@@ -89,12 +100,23 @@ func procesar_estado_actual(direccion : Vector3 , delta : float):
 			procesar_saltando(direccion, delta)
 		ESTADOS.ESPECTANDO:
 			procesar_espectando(delta)
+		ESTADOS.DESLIZANDOSE:
+			procesar_deslizandose(direccion, delta)
 
 
 func procesar_espectando(delta : float):
 	desacelerar_a_quieto(delta)
 	#no agrego ningun cambiar de estado aca porque el estado se cambiaria por reglas del juego
 	#no por inputs del usuario como en el estado idle
+
+
+func procesar_deslizandose(direccion, delta):
+	movimiento_wasd(direccion, delta)
+	manejar_salto() #cuando salto, cambio de estado en esa funcion
+	collision_de_pie.disabled = true #desactivo el collision parado y activo el collision agachado
+	collision_agachado.disabled = false
+	if direccion == Vector3.ZERO:
+		cambiar_de_estado(ESTADOS.IDLE)
 
 func manejar_salto(): #me permite cambiar al estado saltando
 	if Input.is_action_just_pressed("espacio") and body.is_on_floor():
@@ -108,6 +130,11 @@ func procesar_idle(direccion : Vector3 , delta: float):
 	else:
 		desacelerar_a_quieto(delta)
 
+func manejar_deslizandose():
+	if Input.is_action_pressed("control"):
+		cambiar_de_estado(ESTADOS.DESLIZANDOSE)
+	if Input.is_action_just_released("control"):
+		cambiar_de_estado(ESTADOS.CAMINAR)
 
 func procesar_saltando(direccion : Vector3, delta : float):
 	movimiento_wasd(direccion, delta)

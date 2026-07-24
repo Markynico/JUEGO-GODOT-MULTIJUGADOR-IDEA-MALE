@@ -26,17 +26,20 @@ const SERVER_ID := 1
 
 
 func _ready() -> void:
-	#layer_equipos.hide()
-	pass
+	layer_equipos.hide()
 
 #PRIMER PASO, cuando se spawnee un jugador yo escribo en el diccionario y le aviso a los demas jugadores q entro alguien con la funcion sincronizar equipos
 func _on_spawner_jugador_spawneado(id_multijugador: int, instancia_jugador: Player, nombre_steam_jugador: String) -> void:
+	mostrar_menu_equipos.rpc_id(id_multijugador)
 	if !multiplayer.is_server():
 		return
 	diccionario_equipos[id_multijugador] = {"nombre" : nombre_steam_jugador, "equipo" : EQUIPOS.ELIGIENDO}
 	sincronizar_equipos.rpc(diccionario_equipos)
 
 
+@rpc("authority", "reliable", "call_local")
+func mostrar_menu_equipos():
+	layer_equipos.show()
 
 
 func _on_button_equipo_azul_pressed() -> void:
@@ -117,12 +120,13 @@ func obtener_equipo(peer_id: int, equipo: EQUIPOS): #no la uso no le demos bola 
 
 
 func _on_hostear_y_unirse_ejemplo_agregar_jugador(id_jugador: int) -> void:
-	print("Se ejecutó agregar_jugador", id_jugador, multiplayer.get_unique_id())
-	print("mi id:", multiplayer.get_unique_id())
+	#print("Se ejecutó agregar_jugador", id_jugador, multiplayer.get_unique_id())
+	#print("mi id:", multiplayer.get_unique_id())
 	#if id_jugador != multiplayer.get_unique_id(): #para mostrarle el hud solo al jugador q recien se une
 		#return
-	print("ahora q spawneo un personaje muestro el selector de equipos")
-	layer_equipos.show()
+	#print("ahora q spawneo un personaje muestro el selector de equipos")
+	#layer_equipos.show()
+	pass
 
 
 func _on_button_cerrar_pressed() -> void:

@@ -17,8 +17,6 @@ func _ready() -> void:
 	setear_texto_label.rpc(nombre_steam)
 
 func _physics_process(delta: float) -> void:
-	if Input.is_action_just_pressed("control"):
-		probando_cambiar_a_espectando.emit()
 	if not is_multiplayer_authority():
 		return
 

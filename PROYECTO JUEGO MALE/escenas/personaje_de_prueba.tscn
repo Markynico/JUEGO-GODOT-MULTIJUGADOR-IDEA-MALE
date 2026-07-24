@@ -30,6 +30,9 @@ properties/1/replication_mode = 1
 [sub_resource type="SphereShape3D" id="SphereShape3D_8sxmm"]
 radius = 0.3
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_37ege"]
+size = Vector3(1, 0.3569336, 1)
+
 [node name="PersonajeDePrueba" type="CharacterBody3D" unique_id=687461658]
 collision_layer = 2
 collision_mask = 3
@@ -43,7 +46,8 @@ mesh = SubResource("CapsuleMesh_e56gs")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.033447266, 0.52436376, 0.43603587)
 mesh = SubResource("BoxMesh_n1rdq")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1981675105]
+[node name="CollisionDePie" type="CollisionShape3D" parent="." unique_id=1981675105]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CapsuleShape3D_e56gs")
 
@@ -95,11 +99,13 @@ activo = true
 
 [node name="Componentes" type="Node" parent="." unique_id=461629389]
 
-[node name="MovimientoManager" type="Node" parent="Componentes" unique_id=744814532 node_paths=PackedStringArray("body", "camara_jugador", "skin_jugador")]
+[node name="MovimientoManager" type="Node" parent="Componentes" unique_id=744814532 node_paths=PackedStringArray("body", "camara_jugador", "skin_jugador", "collision_de_pie", "collision_agachado")]
 script = ExtResource("3_n1rdq")
 body = NodePath("../..")
 camara_jugador = NodePath("../../CamarasManager/SpringArmCamaraPrincipal/CamaraJugador")
 skin_jugador = NodePath("../../MeshInstance3D")
+collision_de_pie = NodePath("../../CollisionDePie")
+collision_agachado = NodePath("../../CollisionAgachado")
 velocidad = 22.0
 
 [node name="NitroManager" type="Node" parent="Componentes" unique_id=501582312 node_paths=PackedStringArray("body")]
@@ -108,6 +114,12 @@ body = NodePath("../..")
 
 [node name="HUDPlayer" parent="." unique_id=138912741 node_paths=PackedStringArray("body") instance=ExtResource("6_p2vvc")]
 body = NodePath("..")
+
+[node name="CollisionAgachado" type="CollisionShape3D" parent="." unique_id=1937598884]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2137487, 0)
+shape = SubResource("BoxShape3D_37ege")
+disabled = true
 
 [connection signal="probando_cambiar_a_espectando" from="." to="CamarasManager" method="_on_activar_camara_espectador"]
 [connection signal="probando_cambiar_a_espectando" from="." to="Componentes/MovimientoManager" method="_on_espectando_iniciado"]
