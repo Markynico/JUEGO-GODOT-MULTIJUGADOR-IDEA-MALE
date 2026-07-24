@@ -7,8 +7,10 @@ extends Node
 @export var aceleracion : float = 40.0
 @export var desaceleracion : float = 70.0
 
+@export var collision_de_pie : CollisionShape3D
+@export var collision_agachado : CollisionShape3D
 
-enum ESTADOS {IDLE, CAMINAR, SALTANDO, INACTIVO}
+enum ESTADOS {IDLE, CAMINAR, SALTANDO, DESLIZANDOSE , ESPECTANDO}
 var estado_actual : ESTADOS = ESTADOS.IDLE
 var ultimo_estado : ESTADOS
 
@@ -24,7 +26,12 @@ var velocidad_objetivo : float
 
 
 func _ready() -> void:
+	if not body.is_multiplayer_authority():
+		return
 	velocidad_inicial = velocidad
+	collision_agachado.disabled = true
+	body.cambiar_a_modo_espectador.connect(_on_cambiar_a_modo_espectador)
+	body.cambiar_a_modo_corredor.connect(_on_cambiar_a_modo_corredor)
 
 
 
@@ -34,14 +41,17 @@ func _process(delta: float) -> void:
 	aplicar_gravedad(delta)
 	var direction = calcular_direccion()
 	rotar_personaje(direction, delta)
+	#PRUEBO DESLIZANDOSE
+	manejar_deslizandose()
 	procesar_estado_actual(direction, delta)
-	#actualizar_velocidad(delta)
 	body.move_and_slide()
 
 
 
 
 func aplicar_gravedad(delta : float):
+	if estado_actual == ESTADOS.ESPECTANDO:
+		return #para no aplicar gravedad mientras estoy espectando, simplemente se queda ahi en un lugar random sin q lo vean y sin molestar a nadie
 	if not body.is_on_floor():
 		body.velocity += body.get_gravity() * delta
 
@@ -62,6 +72,10 @@ func cambiar_de_estado(estado_nuevo : ESTADOS):
 	if estado_actual==estado_nuevo:
 		return
 	ultimo_estado = estado_actual
+	if ultimo_estado == ESTADOS.DESLIZANDOSE:
+		#como estaba deslizando aca aviso de volver a acticar el collision
+		collision_agachado.disabled = true
+		collision_de_pie.disabled = false
 	estado_actual = estado_nuevo
 	matchear_animaciones() #todavia sin uso, lo dejo para mas adelante
 
@@ -75,7 +89,7 @@ func matchear_animaciones():
 			body.ejecutar_animacion_caminar.emit()
 		ESTADOS.SALTANDO:
 			body.ejecutar_animacion_salto.emit()
-		ESTADOS.INACTIVO:
+		ESTADOS.ESPECTANDO:
 			body.ejecutar_animacion_idle.emit()
 
 
@@ -88,7 +102,25 @@ func procesar_estado_actual(direccion : Vector3 , delta : float):
 			procesar_caminar(direccion, delta)
 		ESTADOS.SALTANDO:
 			procesar_saltando(direccion, delta)
+		ESTADOS.ESPECTANDO:
+			procesar_espectando(delta)
+		ESTADOS.DESLIZANDOSE:
+			procesar_deslizandose(direccion, delta)
 
+
+func procesar_espectando(delta : float):
+	desacelerar_a_quieto(delta)
+	#no agrego ningun cambiar de estado aca porque el estado se cambiaria por reglas del juego
+	#no por inputs del usuario como en el estado idle
+
+
+func procesar_deslizandose(direccion, delta):
+	movimiento_wasd(direccion, delta)
+	manejar_salto() #cuando salto, cambio de estado en esa funcion
+	collision_de_pie.disabled = true #desactivo el collision parado y activo el collision agachado
+	collision_agachado.disabled = false
+	if direccion == Vector3.ZERO:
+		cambiar_de_estado(ESTADOS.IDLE)
 
 func manejar_salto(): #me permite cambiar al estado saltando
 	if Input.is_action_just_pressed("espacio") and body.is_on_floor():
@@ -102,6 +134,11 @@ func procesar_idle(direccion : Vector3 , delta: float):
 	else:
 		desacelerar_a_quieto(delta)
 
+func manejar_deslizandose():
+	if Input.is_action_pressed("control"):
+		cambiar_de_estado(ESTADOS.DESLIZANDOSE)
+	if Input.is_action_just_released("control"):
+		cambiar_de_estado(ESTADOS.CAMINAR)
 
 func procesar_saltando(direccion : Vector3, delta : float):
 	movimiento_wasd(direccion, delta)
@@ -119,7 +156,7 @@ func procesar_caminar(direccion : Vector3, delta: float):
 
 
 func rotar_personaje(direction : Vector3, delta : float):
-	if estado_actual==ESTADOS.INACTIVO:
+	if estado_actual==ESTADOS.ESPECTANDO:
 		return
 	#PARA HACER QUE EL PJ GIRE EN DIRECCION DE DONDE SE QUIERE MOVER (VISUAL POR ESO SOLO EL MESH)
 	if direction.length() > 0.01:
@@ -136,6 +173,10 @@ func calcular_direccion():
 
 
 
+func desactivar_ambas_colissiones(valor : bool):
+	collision_agachado.disabled = valor
+	collision_de_pie.disabled = valor
+
 
 func _on_nitro_activado():
 	velocidad = velocidad_maxima_nitro
@@ -143,9 +184,14 @@ func _on_nitro_activado():
 func _on_nitro_desactivado():
 	velocidad = velocidad_inicial
 
-#func actualizar_velocidad(delta):
-	#if nitro_activado:
-		#velocidad_objetivo = velocidad_maxima_corriendo
-	#else:
-		#velocidad_objetivo = velocidad_inicial
-	#velocidad = move_toward(velocidad,velocidad_objetivo,35 * delta)
+
+func _on_cambiar_a_modo_espectador():
+	cambiar_de_estado(ESTADOS.ESPECTANDO)
+	body.hide()
+	desactivar_ambas_colissiones(true)
+
+
+func _on_cambiar_a_modo_corredor():
+	body.show()
+	desactivar_ambas_colissiones(false)
+	cambiar_de_estado(ESTADOS.CAMINAR)

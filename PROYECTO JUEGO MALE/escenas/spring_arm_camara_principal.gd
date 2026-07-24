@@ -33,5 +33,6 @@ func desactivar_camara():
 	activo = false
 	rotation = rotacion_inicial
 
+
 func activar_camara():
 	activo = true

@@ -4,6 +4,8 @@
 [ext_resource type="Script" uid="uid://b18u5owt5ufc1" path="res://escenas/camaras_manager.gd" id="2_44lwu"]
 [ext_resource type="Script" uid="uid://cmli4jryrg4ol" path="res://escenas/spring_arm_camara_principal.gd" id="2_ejlb5"]
 [ext_resource type="Script" uid="uid://cvfkwkec6p4b3" path="res://escenas/movimiento_manager.gd" id="3_n1rdq"]
+[ext_resource type="Script" uid="uid://0kj6xdv4wfjt" path="res://escenas/camera_espectando.gd" id="4_p2vvc"]
+[ext_resource type="PackedScene" uid="uid://bfeqoojtnuklw" path="res://escenas/pelotita_prueba.tscn" id="5_67qf2"]
 [ext_resource type="Script" uid="uid://dve2e6fgfrp68" path="res://escenas/nitro_manager.gd" id="6_i5glh"]
 [ext_resource type="PackedScene" uid="uid://bgsstduc71f6u" path="res://escenas/hud_player.tscn" id="6_p2vvc"]
 
@@ -29,6 +31,9 @@ properties/1/replication_mode = 1
 [sub_resource type="SphereShape3D" id="SphereShape3D_8sxmm"]
 radius = 0.3
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_37ege"]
+size = Vector3(1, 0.3569336, 1)
+
 [node name="PersonajeDePrueba" type="CharacterBody3D" unique_id=687461658]
 collision_layer = 2
 collision_mask = 3
@@ -42,7 +47,8 @@ mesh = SubResource("CapsuleMesh_e56gs")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.033447266, 0.52436376, 0.43603587)
 mesh = SubResource("BoxMesh_n1rdq")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1981675105]
+[node name="CollisionDePie" type="CollisionShape3D" parent="." unique_id=1981675105]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CapsuleShape3D_e56gs")
 
@@ -71,31 +77,39 @@ offset_top = -55.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="CamarasManager" type="Node3D" parent="." unique_id=1308985841 node_paths=PackedStringArray("body", "camara_jugador")]
+[node name="CamarasManager" type="Node3D" parent="." unique_id=1308985841 node_paths=PackedStringArray("body", "_camara_jugador", "_camara_espectador", "spring_arm_camara_jugador")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5335453, 0)
 script = ExtResource("2_44lwu")
 body = NodePath("..")
-camara_jugador = NodePath("SpringArmCamaraPrincipal/CamaraJugador")
+_camara_jugador = NodePath("SpringArmCamaraPrincipal/CamaraJugador")
+_camara_espectador = NodePath("CameraEspectando")
+spring_arm_camara_jugador = NodePath("SpringArmCamaraPrincipal")
 
-[node name="SpringArmCamaraPrincipal" type="SpringArm3D" parent="CamarasManager" unique_id=1847829506]
+[node name="SpringArmCamaraPrincipal" type="SpringArm3D" parent="CamarasManager" unique_id=1847829506 node_paths=PackedStringArray("body")]
 shape = SubResource("SphereShape3D_8sxmm")
 spring_length = 6.0
 script = ExtResource("2_ejlb5")
+body = NodePath("../..")
 
 [node name="CamaraJugador" type="Camera3D" parent="CamarasManager/SpringArmCamaraPrincipal" unique_id=1560346745]
 fov = 85.0
 
 [node name="CameraEspectando" type="Camera3D" parent="CamarasManager" unique_id=2055501495]
+script = ExtResource("4_p2vvc")
+activo = true
+escena_pelotita = ExtResource("5_67qf2")
 
 [node name="Componentes" type="Node" parent="." unique_id=461629389]
 
-[node name="MovimientoManager" type="Node" parent="Componentes" unique_id=744814532 node_paths=PackedStringArray("body", "camara_jugador", "skin_jugador")]
+[node name="MovimientoManager" type="Node" parent="Componentes" unique_id=744814532 node_paths=PackedStringArray("body", "camara_jugador", "skin_jugador", "collision_de_pie", "collision_agachado")]
 script = ExtResource("3_n1rdq")
 body = NodePath("../..")
 camara_jugador = NodePath("../../CamarasManager/SpringArmCamaraPrincipal/CamaraJugador")
 skin_jugador = NodePath("../../MeshInstance3D")
 velocidad = 60.0
 velocidad_maxima_nitro = 75.0
+collision_de_pie = NodePath("../../CollisionDePie")
+collision_agachado = NodePath("../../CollisionAgachado")
 
 [node name="NitroManager" type="Node" parent="Componentes" unique_id=501582312 node_paths=PackedStringArray("body")]
 script = ExtResource("6_i5glh")
@@ -104,6 +118,12 @@ consumo_nitro = 10.0
 
 [node name="HUDPlayer" parent="." unique_id=138912741 node_paths=PackedStringArray("body") instance=ExtResource("6_p2vvc")]
 body = NodePath("..")
+
+[node name="CollisionAgachado" type="CollisionShape3D" parent="." unique_id=1937598884]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2137487, 0)
+shape = SubResource("BoxShape3D_37ege")
+disabled = true
 
 [connection signal="text_submitted" from="ChatManager/LineEdit" to="." method="_on_line_edit_text_submitted"]
 [connection signal="nitro_activado" from="Componentes/NitroManager" to="CamarasManager" method="_on_nitro_activado"]

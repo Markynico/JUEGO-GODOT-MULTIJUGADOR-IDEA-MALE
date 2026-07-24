@@ -1,6 +1,9 @@
 extends CharacterBody3D
 class_name Player
 
+signal cambiar_a_modo_espectador #CAMBIAR A MODO ESPECTADOR INICIADO
+signal cambiar_a_modo_corredor
+
 
 func _enter_tree() -> void:
 	set_multiplayer_authority(name.to_int())
@@ -8,8 +11,9 @@ func _enter_tree() -> void:
 func _ready() -> void:
 	if not is_multiplayer_authority():
 		%LineEdit.hide()
-	var nombre_steam : String = Steam.getPersonaName() #si estamos en modo ENET va a dar error, no se preocupen
-	print(nombre_steam)
+	var nombre_steam : String = get_nombre_steam() #si estamos en modo ENET va a dar error, no se preocupen
+	print("NOMBRE STEAM VALE: ",nombre_steam)
+	#si estamos en enet nombre steam queda como un string vacio ""
 	setear_texto_label.rpc(nombre_steam)
 
 func _physics_process(delta: float) -> void:
@@ -29,3 +33,8 @@ func _on_line_edit_text_submitted(new_text: String) -> void:
 @rpc("authority", "call_local")
 func setear_texto_label(texto : String):
 	%Label3D.text = texto 
+
+
+func get_nombre_steam():
+	var nombre_steam : String = Steam.getPersonaName()
+	return nombre_steam
