@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://c5iii3fxon6cd" path="res://escenas/spawner_jugadores.tscn" id="4_lc11t"]
 [ext_resource type="PackedScene" uid="uid://bvtjh3wkdtbl2" path="res://escena_prototipos/pista_1.tscn" id="5_kjfre"]
 [ext_resource type="PackedScene" uid="uid://crrwefxtvqv5k" path="res://escenas/equipos_manager.tscn" id="6_wgupi"]
-[ext_resource type="Script" uid="uid://wbtv5svxcrql" path="res://escenas/sistema_checkpoints.gd" id="7_sw5uh"]
+[ext_resource type="Script" uid="uid://c8vnhvc085p7t" path="res://escena_prototipos/corredores_manager.gd" id="7_sw5uh"]
 
 
 
