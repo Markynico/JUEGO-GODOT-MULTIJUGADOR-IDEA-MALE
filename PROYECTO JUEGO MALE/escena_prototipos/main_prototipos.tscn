@@ -31,9 +31,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0334892, 0)
 
 [node name="pista procedural" parent="." unique_id=1494475582 instance=ExtResource("6_sw5uh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.751793, 0.44184875, -10.30991)
-seed_pista = 740112654
-cantidad_puntos = 10
-variacion_altura = 100.0
+seed_pista = 3835478976
+cantidad_puntos = 20
+variacion_altura = 50.0
 desviacion = 20.0
 probabilidad_recta = 0.2
 colinas = 5.0
