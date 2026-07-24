@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="JUEGO IDEA MALE"
-run/main_scene="uid://db3c4gewtolrb"
+run/main_scene="uid://cwirmrho1chmh"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="uid://bgjy42fvt4esl"
 
