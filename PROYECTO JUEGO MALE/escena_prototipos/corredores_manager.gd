@@ -17,7 +17,7 @@ extends Node
 
 const SERVER_ID := 1
 
-var tiempo_x_ronda : int = 90
+@export var tiempo_x_ronda : int = 15
 var tiempo_actual : int
 
 var juego_iniciado : bool = false
@@ -28,6 +28,9 @@ var lista_corredores_azul : Array = []
 
 func _ready() -> void:
 	tiempo_actual = tiempo_x_ronda
+	#le paso el tiempo al timer desde acá para no tener el numero repetido en la escena
+	timer_corredores.wait_time = tiempo_x_ronda
+	timer_segundos.wait_time = 1.0
 	button_comenzar_juego.hide()
 	label_tiempo_corredores.text = "Esperando que empiece la partida..."
 	#los timers los arranca el server cuando se aprieta el boton, no antes
@@ -46,23 +49,21 @@ func _on_equipos_manager_equipos_actualizados(diccionario_equipos: Variant) -> v
 	if juego_iniciado:
 		return
 	#antes habia un await de 2 segundos aca que se apilaba una vez por cada cambio de equipo
-	#y mostraba el boton aunque faltara gente, ahora lo chequeamos de verdad
-	if _hay_equipos_completos(diccionario_equipos):
+	#y mostraba el boton aunque no hubiera nadie, ahora lo chequeamos de verdad
+	#no pedimos los dos equipos llenos: con un equipo vacio la partida igual funciona,
+	#simplemente corre uno solo y el otro carril queda libre
+	if _hay_alguien_en_un_equipo(diccionario_equipos):
 		button_comenzar_juego.show()
 	else:
 		button_comenzar_juego.hide()
 
 
-func _hay_equipos_completos(diccionario_equipos : Dictionary) -> bool:
-	var hay_rojo : bool = false
-	var hay_azul : bool = false
+func _hay_alguien_en_un_equipo(diccionario_equipos : Dictionary) -> bool:
 	for id in diccionario_equipos.keys():
 		match diccionario_equipos[id]["equipo"]:
-			EquiposManager.EQUIPOS.ROJO:
-				hay_rojo = true
-			EquiposManager.EQUIPOS.AZUL:
-				hay_azul = true
-	return hay_rojo and hay_azul
+			EquiposManager.EQUIPOS.ROJO, EquiposManager.EQUIPOS.AZUL:
+				return true #con uno solo que haya elegido equipo ya alcanza
+	return false
 
 
 func _on_button_comenzar_juego_pressed() -> void:
@@ -81,9 +82,9 @@ func _on_button_comenzar_juego_pressed() -> void:
 			EquiposManager.EQUIPOS.AZUL:
 				lista_corredores_azul.push_back(id)
 
-	if lista_corredores_rojo.is_empty() or lista_corredores_azul.is_empty():
-		print("No se puede empezar: hace falta al menos 1 jugador por equipo. ROJOS: ",
-				lista_corredores_rojo, " AZULES: ", lista_corredores_azul)
+	#alcanza con que haya UN equipo con gente, si el otro esta vacio corre uno solo
+	if lista_corredores_rojo.is_empty() and lista_corredores_azul.is_empty():
+		print("No se puede empezar: no hay nadie que haya elegido equipo todavia")
 		return #dejo el boton visible para que lo pueda volver a intentar
 
 	juego_iniciado = true
@@ -102,7 +103,7 @@ func _on_button_comenzar_juego_pressed() -> void:
 func _on_timer_corredores_timeout() -> void:
 	if !multiplayer.is_server():
 		return
-	#esto va a sonar cuando terminen los 90 segundos
+	#esto va a sonar cada vez que se termine la ronda (tiempo_x_ronda segundos)
 	tiempo_actual = tiempo_x_ronda #reinicio el segundero
 	#el TimerCorredores no es one_shot, se reinicia solo, no hace falta el .start()
 	seleccionar_corredores()
@@ -111,21 +112,54 @@ func _on_timer_corredores_timeout() -> void:
 func seleccionar_corredores() -> void:
 	if !multiplayer.is_server():
 		return
-	if lista_corredores_rojo.is_empty() or lista_corredores_azul.is_empty():
-		print("No hay corredores suficientes para rotar, corto la ronda")
+
+	#saco de las listas a los que ya no estan, sino le tocaria el turno a un fantasma
+	#y la ronda se pasaria entera sin que corra nadie de ese equipo
+	_limpiar_desconectados(lista_corredores_rojo)
+	_limpiar_desconectados(lista_corredores_azul)
+
+	#cada equipo aporta como maximo UN corredor, y cada lista rota por separado
+	#si un equipo esta vacio simplemente no aporta a nadie (antes esto devolvia null y explotaba)
+	var corredores : Array = []
+	var corredor_rojo = _rotar_lista(lista_corredores_rojo)
+	if corredor_rojo != null:
+		corredores.append(corredor_rojo)
+	var corredor_azul = _rotar_lista(lista_corredores_azul)
+	if corredor_azul != null:
+		corredores.append(corredor_azul)
+
+	if corredores.is_empty():
+		print("Se quedo sin corredores (se fueron todos?), paro la rotacion")
+		timer_corredores.stop()
+		timer_segundos.stop()
+		juego_iniciado = false
+		aplicar_corredores.rpc([])
 		return
-
-	#saco el primero de la lista y lo manda al fondo, asi van rotando en orden
-	var corredor_rojo = lista_corredores_rojo.pop_front()
-	lista_corredores_rojo.push_back(corredor_rojo)
-
-	var corredor_azul = lista_corredores_azul.pop_front()
-	lista_corredores_azul.push_back(corredor_azul)
 
 	print("Corredor rojo: ", corredor_rojo, " | Corredor azul: ", corredor_azul)
 
 	#y aca esta la parte importante: le aviso a TODAS las compus quienes corren
-	aplicar_corredores.rpc([corredor_rojo, corredor_azul])
+	aplicar_corredores.rpc(corredores)
+
+
+##Saca el primero de la lista y lo manda al fondo, asi van rotando en orden y le toca a todos.
+##Devuelve null si el equipo esta vacio.
+##Si el equipo tiene un solo jugador siempre devuelve el mismo, o sea que se queda corriendo
+##(no hay con quien rotar, y eso esta bien)
+func _rotar_lista(lista : Array):
+	if lista.is_empty():
+		return null
+	var corredor = lista.pop_front()
+	lista.push_back(corredor)
+	return corredor
+
+
+##Voy de atras para adelante porque estoy borrando mientras recorro
+func _limpiar_desconectados(lista : Array) -> void:
+	for i in range(lista.size() - 1, -1, -1):
+		if not Global.instancia_jugadores.has(lista[i]):
+			print("Saco de la rotacion al jugador ", lista[i], " porque ya no esta")
+			lista.remove_at(i)
 
 
 @rpc("authority", "reliable", "call_local")

@@ -40,7 +40,7 @@ metadata/_custom_type_script = "uid://wbtv5svxcrql"
 
 [node name="TimerCorredores" type="Timer" parent="." unique_id=226892977]
 unique_name_in_owner = true
-wait_time = 90.0
+wait_time = 15.0
 
 [node name="ButtonComenzarJuego" type="Button" parent="." unique_id=48106784]
 unique_name_in_owner = true
@@ -71,7 +71,7 @@ offset_bottom = 51.0
 grow_horizontal = 2
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 25
-text = "Siguiente corredor en: 90"
+text = "Siguiente corredor en: 15"
 horizontal_alignment = 1
 vertical_alignment = 1
 
