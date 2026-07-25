@@ -17,6 +17,7 @@ var movimiento_y : float = 0.0
 var movimiento_x : float = 0.0
 
 var rotacion_inicial : Vector3
+var posicion_inicial : Vector3
 
 func _ready() -> void:
 	#inicializo cositasss
@@ -24,6 +25,7 @@ func _ready() -> void:
 	movimiento_x = rotation.x
 	move_target = position
 	rotacion_inicial = rotation
+	posicion_inicial = position
 
 
 func _input(event: InputEvent) -> void:
@@ -99,15 +101,19 @@ func _process(delta: float) -> void: #en process anda MUCHISIMO mejor que en phy
 
 func activar_camara():
 	activo = true
+	move_target = position #sino la camara sale volando hacia un target viejo
+	movimiento_y = rotation.y
+	movimiento_x = rotation.x
 	set_process(true)
-	#rotation = rotacion_inicial
-	#global_position = posicion_inicial
 
 func desactivar_camara():
 	activo = false
 	set_process(false)
 	rotation = rotacion_inicial
-	position = marker_posicion.position
-	move_target = marker_posicion.position
+	#el marker es opcional (en la escena del personaje no esta seteado y esto crasheaba con
+	#un null), si no lo tenemos volvemos a la posicion que tenia la camara en la escena
+	var posicion_reset : Vector3 = marker_posicion.position if marker_posicion else posicion_inicial
+	position = posicion_reset
+	move_target = posicion_reset
 	movimiento_x = 0.0
 	movimiento_y = 0.0

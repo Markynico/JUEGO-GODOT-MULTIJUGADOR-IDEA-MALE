@@ -26,10 +26,12 @@ var velocidad_objetivo : float
 
 
 func _ready() -> void:
-	if not body.is_multiplayer_authority():
-		return
 	velocidad_inicial = velocidad
 	collision_agachado.disabled = true
+	collision_de_pie.disabled = false
+	#OJO: estas dos las conecto en TODAS las compus (sin el guard de authority) porque el
+	#cambio de modo tambien apaga los collision, y eso lo tienen que aplicar todos
+	#sino el resto seguiria chocandose con un espectador invisible
 	body.cambiar_a_modo_espectador.connect(_on_cambiar_a_modo_espectador)
 	body.cambiar_a_modo_corredor.connect(_on_cambiar_a_modo_corredor)
 
@@ -187,11 +189,16 @@ func _on_nitro_desactivado():
 
 func _on_cambiar_a_modo_espectador():
 	cambiar_de_estado(ESTADOS.ESPECTANDO)
-	body.hide()
+	#NO usamos body.hide() aca: eso apaga TODO el subarbol del personaje, incluida la
+	#CameraEspectando (una Camera3D oculta no renderiza) y quedabas viendo una pantalla negra.
+	#la parte visual la maneja Player.aplicar_modo() escondiendo solo el mesh y el label
+	body.velocity = Vector3.ZERO
 	desactivar_ambas_colissiones(true)
 
 
 func _on_cambiar_a_modo_corredor():
-	body.show()
-	desactivar_ambas_colissiones(false)
 	cambiar_de_estado(ESTADOS.CAMINAR)
+	#antes esto hacia desactivar_ambas_colissiones(false), que prendia el de pie Y el agachado
+	#a la vez, dejando al personaje con dos colliders encimados
+	collision_de_pie.disabled = false
+	collision_agachado.disabled = true

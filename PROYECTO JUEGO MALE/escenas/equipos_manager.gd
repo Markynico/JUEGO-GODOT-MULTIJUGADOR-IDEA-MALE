@@ -33,7 +33,8 @@ func _on_spawner_jugador_spawneado(id_multijugador: int, instancia_jugador: Play
 	if !multiplayer.is_server():
 		return
 	Global.diccionario_equipos[id_multijugador] = {"nombre" : nombre_steam_jugador, "equipo" : EQUIPOS.ELIGIENDO}
-	Global.instancia_jugadores[id_multijugador] = instancia_jugador
+	#instancia_jugadores ya no se llena aca: cada Player se anota solito en su _ready, asi el
+	#diccionario existe en TODAS las compus y no solo en la del server (el CorredoresManager lo necesita)
 	sincronizar_equipos.rpc(Global.diccionario_equipos)
 
 

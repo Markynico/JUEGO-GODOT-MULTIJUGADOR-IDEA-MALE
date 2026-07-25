@@ -26,6 +26,10 @@ func _ready() -> void:
 	#_camara_espectador.current = true #esto dsp sacarlo para q no pise el estado real al iniciar
 	_camara_jugador.current = true #esto dsp sacarlo para q no pise el estado real al iniciar
 	fov_objetivo = fov_minimo
+	#estas dos conexiones faltaban: el cambio de modo cambiaba el movimiento pero nunca la camara
+	#van con el guard de authority porque la camara es cosa de cada jugador en su propia compu
+	body.cambiar_a_modo_espectador.connect(_on_activar_camara_espectador)
+	body.cambiar_a_modo_corredor.connect(_on_activar_camara_jugador)
 
 
 func _physics_process(delta: float) -> void:
