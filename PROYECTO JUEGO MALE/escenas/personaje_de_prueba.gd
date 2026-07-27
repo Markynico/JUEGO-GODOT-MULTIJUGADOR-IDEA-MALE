@@ -39,7 +39,7 @@ func aplicar_modo(nuevo_es_corredor : bool) -> void:
 	es_corredor = nuevo_es_corredor
 	#la parte visual la apagamos en todas las compus, sino el resto seguiria viendo
 	#al espectador parado en el medio de la pista
-	$MeshInstance3D.visible = es_corredor
+	%SkinPivot.visible = es_corredor
 	%Label3D.visible = es_corredor
 	#y aca aviso a los managers (movimiento y camaras) que hagan lo suyo
 	if es_corredor:

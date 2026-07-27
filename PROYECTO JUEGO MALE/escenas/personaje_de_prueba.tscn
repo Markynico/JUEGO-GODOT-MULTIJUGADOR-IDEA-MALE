@@ -263,7 +263,6 @@ animation = &"animaciones_pack1/Running_A"
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_1d18m"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_37ege"]
-graph_offset = Vector2(-911.2517, -42.729034)
 nodes/Animaciones/node = SubResource("AnimationNodeTransition_3t8hd")
 nodes/Animaciones/position = Vector2(-40, 60)
 nodes/AnimacionIdle/node = SubResource("AnimationNodeAnimation_f5fq7")
@@ -364,6 +363,7 @@ shape = SubResource("BoxShape3D_37ege")
 disabled = true
 
 [node name="SkinPivot" type="Node3D" parent="." unique_id=397672897]
+unique_name_in_owner = true
 
 [node name="Knight" type="Node3D" parent="SkinPivot" unique_id=193644046]
 
