@@ -26,7 +26,6 @@ material = SubResource("StandardMaterial3D_nbmnv")
 unique_name_in_owner = true
 
 [node name="HostearYUnirseEjemplo" parent="." unique_id=2129995875 instance=ExtResource("3_nbmnv")]
-MULTIJUGADOR_TIPO = "STEAM"
 
 [node name="SpawnerJugadores" parent="." unique_id=484033519 instance=ExtResource("4_lc11t")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0334892, 0)

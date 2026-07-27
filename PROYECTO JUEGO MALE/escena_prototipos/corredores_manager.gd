@@ -96,4 +96,4 @@ func _on_equipos_manager_equipos_actualizados(diccionario_equipos: Variant) -> v
 		return
 	await get_tree().create_timer(2).timeout
 	print("ya se actualizo el equipo, mostrar boton de comenzar juego")
-	button_comenzar_juego.show()
+	#button_comenzar_juego.show()
