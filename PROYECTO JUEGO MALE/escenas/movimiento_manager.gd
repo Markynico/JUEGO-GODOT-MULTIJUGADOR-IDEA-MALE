@@ -22,7 +22,9 @@ var velocidad_inicial : float
 var velocidad_objetivo : float
 @export var velocidad_salto : float = 6.6
 
-
+signal ejecutar_animacion_idle
+signal ejecutar_animacion_correr
+signal ejecutar_animacion_salto
 
 
 func _ready() -> void:
@@ -83,16 +85,15 @@ func cambiar_de_estado(estado_nuevo : ESTADOS):
 
 
 func matchear_animaciones():
-	return #lo dejo para mas adelante
+	print("matchear")
 	match estado_actual:
 		ESTADOS.IDLE:
-			body.ejecutar_animacion_idle.emit()
+			ejecutar_animacion_idle.emit() #ejecuta la funcion del animation manager con el mismo nombre, conectado desde el editor
 		ESTADOS.CAMINAR:
-			body.ejecutar_animacion_caminar.emit()
+			ejecutar_animacion_correr.emit()
 		ESTADOS.SALTANDO:
-			body.ejecutar_animacion_salto.emit()
-		ESTADOS.ESPECTANDO:
-			body.ejecutar_animacion_idle.emit()
+			ejecutar_animacion_salto.emit()
+
 
 
 
