@@ -13,9 +13,13 @@ func spawnear_jugador(id_desde_steam_manager : int = 0): #esta funcion se ejecut
 	setear_id_jugador(id_desde_steam_manager, instancia_jugador)
 	add_child(instancia_jugador)
 	instancia_jugador.global_position = marker_position.global_position
-	var nombre_steam : String = instancia_jugador.get_nombre_steam()
-	#print("SE INSTANCIO Y NOMBRE STEAM VALE: ", nombre_steam)
-	jugador_spawneado.emit(id_desde_steam_manager, instancia_jugador, nombre_steam)
+	#OJO: aca NO se puede preguntar el nombre de steam del que entro, porque esta funcion
+	#corre en la compu del SERVER y Steam.getPersonaName() devuelve el nombre del que esta
+	#sentado en esa compu, o sea el del host (por eso antes TODOS los jugadores aparecian
+	#en la lista con el nombre del host)
+	#mando un nombre provisorio y despues cada jugador informa el suyo desde SU propia compu
+	var nombre_provisorio : String = "Jugador " + str(id_desde_steam_manager)
+	jugador_spawneado.emit(id_desde_steam_manager, instancia_jugador, nombre_provisorio)
 
 
 func setear_id_jugador(id_desde_steam_manager : int, instancia_jugador):

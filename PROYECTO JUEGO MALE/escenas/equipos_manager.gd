@@ -29,17 +29,51 @@ func _ready() -> void:
 
 #PRIMER PASO, cuando se spawnee un jugador yo escribo en el diccionario y le aviso a los demas jugadores q entro alguien con la funcion sincronizar equipos
 func _on_spawner_jugador_spawneado(id_multijugador: int, instancia_jugador: Player, nombre_steam_jugador: String) -> void:
-	mostrar_menu_equipos.rpc_id(id_multijugador)
 	if !multiplayer.is_server():
 		return
+	#el nombre que llega del spawner es provisorio ("Jugador 123"), el de verdad lo manda
+	#el propio jugador desde su compu con informar_nombre
 	Global.diccionario_equipos[id_multijugador] = {"nombre" : nombre_steam_jugador, "equipo" : EQUIPOS.ELIGIENDO}
-	Global.instancia_jugadores[id_multijugador] = instancia_jugador
+	#instancia_jugadores ya no se llena aca: cada Player se anota solito en su _ready, asi el
+	#diccionario existe en TODAS las compus y no solo en la del server (el CorredoresManager lo necesita)
 	sincronizar_equipos.rpc(Global.diccionario_equipos)
+	#el menu lo muestro DESPUES de anotarlo en el diccionario, asi cuando el jugador me
+	#conteste con su nombre yo ya tengo su entrada creada
+	mostrar_menu_equipos.rpc_id(id_multijugador)
 
 
 @rpc("authority", "reliable", "call_local")
 func mostrar_menu_equipos():
 	layer_equipos.show()
+	#aprovecho que el server ya me anoto en el diccionario y le mando MI nombre de steam,
+	#que es el unico que puedo averiguar bien porque lo pregunto en MI propia compu
+	informar_nombre.rpc_id(SERVER_ID, _obtener_nombre_propio())
+
+
+func _obtener_nombre_propio() -> String:
+	var mi_id := multiplayer.get_unique_id()
+	var nombre : String = ""
+	var jugador = Global.instancia_jugadores.get(mi_id)
+	if jugador:
+		nombre = jugador.get_nombre_steam()
+	if nombre.is_empty(): #en modo ENET no hay steam, asi que igual mostramos algo
+		nombre = "Jugador " + str(mi_id)
+	return nombre
+
+
+@rpc("any_peer", "reliable", "call_local")
+#any_peer porque cada jugador informa su propio nombre, igual que solicitar_unirse_equipo
+func informar_nombre(nombre : String) -> void:
+	if !multiplayer.is_server():
+		return
+	var id := multiplayer.get_remote_sender_id()
+	if id == 0: #vino por call_local, o sea que es el host el que esta informando
+		id = multiplayer.get_unique_id()
+	if not Global.diccionario_equipos.has(id):
+		print("Me informaron el nombre del jugador ", id, " pero todavia no esta en el diccionario")
+		return
+	Global.diccionario_equipos[id]["nombre"] = nombre
+	sincronizar_equipos.rpc(Global.diccionario_equipos) #y le reparto la lista actualizada a todos
 
 
 func _on_button_equipo_azul_pressed() -> void:
