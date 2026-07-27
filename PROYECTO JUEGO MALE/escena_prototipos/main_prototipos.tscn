@@ -62,13 +62,16 @@ script = ExtResource("8_rnuip")
 
 [node name="LabelTiempoCorredores" type="Label" parent="." unique_id=879666960]
 unique_name_in_owner = true
-anchors_preset = 5
+anchors_preset = 7
 anchor_left = 0.5
+anchor_top = 1.0
 anchor_right = 0.5
-offset_left = -20.0
-offset_right = 20.0
-offset_bottom = 51.0
+anchor_bottom = 1.0
+offset_left = -151.5
+offset_top = -51.0
+offset_right = 151.5
 grow_horizontal = 2
+grow_vertical = 0
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 25
 text = "Siguiente corredor en: 15"
