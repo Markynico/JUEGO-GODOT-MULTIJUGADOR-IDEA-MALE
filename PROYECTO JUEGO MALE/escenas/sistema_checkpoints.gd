@@ -44,6 +44,19 @@ enum Tipo { AUTO, CIRCUITO, SPRINT }
 	set(value):
 		alto = maxf(value, 1.0)
 		_regenerar_en_editor()
+# El grosor es lo que evita que un jugador rapido "atraviese" el arco entre dos
+# frames de fisica sin que el Area3D llegue a detectarlo.
+@export var grosor: float = 4.0:
+	set(value):
+		grosor = maxf(value, 0.5)
+		_regenerar_en_editor()
+# OJO: los Area3D nacen con collision_mask = 1 (capa "Mundo"), y el jugador vive
+# en la capa 2 ("Personaje"). Si no forzamos esta mascara los arcos se ven pero
+# no detectan a nadie nunca.
+@export_flags_3d_physics var mascara_jugadores: int = 2:
+	set(value):
+		mascara_jugadores = value
+		_regenerar_en_editor()
 @export var mostrar_gizmos: bool = true:
 	set(value):
 		mostrar_gizmos = value
@@ -127,7 +140,9 @@ func generar() -> void:
 			if invertir_direccion:
 				distancia = largo - distancia
 		var transformada := curva.sample_baked_with_rotation(distancia, true, true)
-		var nombre := "Largada"
+		# En circuito la largada y la meta son el mismo arco (se cruza cada vuelta),
+		# en sprint la meta es el ultimo arco.
+		var nombre := "LargadaMeta" if es_circuito else "Largada"
 		if i > 0:
 			nombre = "Meta" if (not es_circuito and i == total - 1) else "Checkpoint%d" % i
 		_crear_arco(nombre, i, transformada)
@@ -172,10 +187,16 @@ func _ancho_arco() -> float:
 func _crear_arco(nombre: String, indice: int, transformada: Transform3D) -> void:
 	var area := Area3D.new()
 	area.name = nombre
+	# El area no ocupa ninguna capa (no queremos que nada choque contra ella),
+	# solo escucha la capa donde estan los jugadores.
+	area.collision_layer = 0
+	area.collision_mask = mascara_jugadores
+	area.monitoring = true
+	area.monitorable = false
 	var forma := CollisionShape3D.new()
 	var caja := BoxShape3D.new()
 	var w := _ancho_arco()
-	caja.size = Vector3(w, alto, 2.0)
+	caja.size = Vector3(w, alto, grosor)
 	forma.shape = caja
 	area.add_child(forma)
 	add_child(area)
@@ -190,7 +211,14 @@ func _crear_arco(nombre: String, indice: int, transformada: Transform3D) -> void
 		malla.size = caja.size
 		var material := StandardMaterial3D.new()
 		material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		material.albedo_color = Color(0.2, 1.0, 0.3, 0.35) if indice == 0 else Color(1.0, 0.8, 0.1, 0.25)
+		# Meta en rojo (en circuito la meta es el mismo arco de largada),
+		# largada de sprint en verde, checkpoints intermedios en amarillo.
+		if nombre.begins_with("Meta") or nombre == "LargadaMeta":
+			material.albedo_color = Color(1.0, 0.15, 0.15, 0.35)
+		elif indice == 0:
+			material.albedo_color = Color(0.2, 1.0, 0.3, 0.35)
+		else:
+			material.albedo_color = Color(1.0, 0.8, 0.1, 0.25)
 		material.cull_mode = BaseMaterial3D.CULL_DISABLED
 		malla.material = material
 		visual.mesh = malla
@@ -210,7 +238,7 @@ func _regenerar_en_editor() -> void:
 		generar()
 
 func _al_entrar(cuerpo: Node3D, indice: int) -> void:
-	if Engine.is_editor_hint() or not cuerpo is Player:
+	if Engine.is_editor_hint() or not carrera_activa or not cuerpo is Player:
 		return
 	var jugador := cuerpo as Player
 	if not progreso.has(jugador):

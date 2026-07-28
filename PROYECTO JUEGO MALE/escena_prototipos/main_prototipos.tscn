@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://2eyrjyvlbtkv" path="res://escenas/hostear_y_unirse_ejemplo.tscn" id="3_nbmnv"]
 [ext_resource type="PackedScene" uid="uid://c5iii3fxon6cd" path="res://escenas/spawner_jugadores.tscn" id="4_lc11t"]
 [ext_resource type="PackedScene" uid="uid://bvtjh3wkdtbl2" path="res://escena_prototipos/pista_1.tscn" id="5_kjfre"]
+[ext_resource type="PackedScene" uid="uid://i3enhkax7gbj" path="res://escena_prototipos/pista_procedural.tscn" id="6_k2peg"]
 [ext_resource type="PackedScene" uid="uid://crrwefxtvqv5k" path="res://escenas/equipos_manager.tscn" id="6_wgupi"]
 [ext_resource type="Script" uid="uid://wbtv5svxcrql" path="res://escenas/sistema_checkpoints.gd" id="7_sw5uh"]
 [ext_resource type="Script" uid="uid://c8vnhvc085p7t" path="res://escena_prototipos/corredores_manager.gd" id="8_rnuip"]
@@ -31,12 +32,19 @@ unique_name_in_owner = true
 [node name="SpawnerJugadores" parent="." unique_id=484033519 instance=ExtResource("4_lc11t")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0334892, 0)
 
-[node name="Pista 1" parent="." unique_id=1640144455 instance=ExtResource("5_kjfre")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.817734, 154.96474)
+[node name="pista procedural" parent="." unique_id=1494475582 instance=ExtResource("6_k2peg")]
+seed_pista = 560517218
+curvatura = 90.0
 
-[node name="SistemaCheckpoints" type="Node3D" parent="Pista 1" unique_id=360244737]
+[node name="SistemaCheckpoints" type="Node3D" parent="pista procedural" unique_id=360244737]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 177.00763, -4.817734, 141.65993)
 script = ExtResource("7_sw5uh")
+cantidad_checkpoints = 15
 metadata/_custom_type_script = "uid://wbtv5svxcrql"
+
+[node name="Pista 1" parent="." unique_id=1640144455 instance=ExtResource("5_kjfre")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 177.00763, -4.817734, 141.65993)
+visible = false
 
 [node name="TimerCorredores" type="Timer" parent="." unique_id=226892977]
 unique_name_in_owner = true
